@@ -1,47 +1,99 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Tokens de Gota a favor: estilo Linear/Apple con los colores de las
- * camisetas del FC Versailles 26/27. Nunca uses hex sueltos en componentes.
+ * Tokens de Gota a favor, según DESIGN (1): galería blanca estilo Apple.
+ * Lienzo blanco, bandas #f5f5f7, texto #1d1d1f y un solo azul para enlaces y
+ * acciones. El navy y el dorado quedan para la marca. Nunca hex sueltos en
+ * los componentes.
  */
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        navy: "#1B2A4A", // primario (L'Ornement)
-        "navy-deep": "#101B33", // hover
-        gold: "#B8964E", // acentos, racha, efectivo alto
-        "gold-soft": "#F3EAD3", // fondos de chips o avisos dorados
-        "gold-ink": "#6E5520", // texto sobre gold-soft
-        "gold-on": "#1F1A08", // texto sobre gold
-        bordeaux: "#7A1F2B", // alertas y riesgo (Le Pictural)
-        "bordeaux-soft": "#F6E7E9", // fondo de compuerta no cumplida
-        ivory: "#FAF8F3", // fondo general (Le Lys)
-        surface: "#F3F0E8", // tarjetas internas
-        card: "#FFFFFF", // tarjetas
-        line: "#E6E8EC", // bordes de 1 px
-        divider: "#EEF0F3", // separadores internos
-        ink: "#0E1726", // texto principal
-        muted: "#5A6473", // texto secundario
-        slate: "#3A4556", // texto de navegación y filas
-        mist: "#E9EBEF", // pistas de barras y chips de fecha
-        haze: "#EEF1F6", // chip pendiente y navegación activa
-        sand: "#D8CFB8", // borde de botones secundarios
-        "on-navy": "#CDD3E0", // texto secundario sobre navy
-        "ok-bg": "#E3F1E8",
-        "ok-ink": "#1E5B3A",
-        "warn-bg": "#FFF4D6",
-        "warn-line": "#E9D48A",
-        "warn-ink": "#3F3515",
-      },
-      boxShadow: {
-        suave: "0 1px 2px rgba(14, 23, 38, 0.04)",
-        marco: "0 1px 2px rgba(14, 23, 38, 0.04), 0 18px 48px -24px rgba(14, 23, 38, 0.18)",
+        // Superficies
+        card: "#ffffff", // Gallery White: lienzo y tarjetas
+        mist: "#f5f5f7", // Studio Mist: bandas, fondos de app y tiles internos
+        frost: "#fafafc", // Paper Frost: navegación abierta
+        control: "#e6e6e8", // Control Gray: pistas de barras, controles apagados
+        line: "#d6d6d6", // Hairline Silver: bordes de 1 px
+        divider: "#e8e8ed", // separadores dentro de tarjetas
+        // Texto
+        ink: "#1d1d1f", // titulares y cuerpo
+        "ink-soft": "#424245", // navegación y filas (≈ negro al 80%)
+        muted: "#707070", // Slate: texto secundario
+        steel: "#86868b", // contornos de píldoras y entradas
+        "on-dark": "#a1a1a6", // texto secundario sobre fondo oscuro
+        // Acción
+        blue: "#0066cc", // Apple Blue: enlaces
+        "blue-fill": "#0071e3", // Pricing Blue: botones de acción
+        "blue-deep": "#0060c0", // presión y hover de los botones azules
+        // Estados
+        orange: "#b64400", // Launch Orange: etiquetas de estado
+        "orange-soft": "#fff3eb",
+        "orange-line": "#f2c7a5",
+        green: "#1d7a35",
+        "green-soft": "#e8f5eb",
+        red: "#c4001a",
+        "red-soft": "#fdecee",
+        // Marca (logo)
+        "brand-navy": "#13294b",
+        gold: "#c29a5b", // punto de la gota y barra de efectivo alta
+        "gold-text": "#8a6530", // "favor" del logotipo en texto (contraste AA)
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
+        // SF Pro en equipos Apple; Inter (sustituto del DESIGN) en los demás
+        sans: [
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"SF Pro Text"',
+          "var(--font-inter)",
+          '"Helvetica Neue"',
+          "Arial",
+          "sans-serif",
+        ],
+        display: [
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"SF Pro Display"',
+          "var(--font-inter)",
+          '"Helvetica Neue"',
+          "Arial",
+          "sans-serif",
+        ],
+      },
+      fontSize: {
+        // Escala del DESIGN: tamaño, interlineado y tracking van juntos
+        caption: ["12px", { lineHeight: "1.33", letterSpacing: "-0.01em" }],
+        "body-sm": ["14px", { lineHeight: "1.43", letterSpacing: "-0.016em" }],
+        body: ["17px", { lineHeight: "1.47", letterSpacing: "-0.022em" }],
+        "nav-title": ["19px", { lineHeight: "1.21", letterSpacing: "0.012em" }],
+        kicker: ["21px", { lineHeight: "1.19", letterSpacing: "0.011em" }],
+        "feature-sm": ["28px", { lineHeight: "1.14", letterSpacing: "0.007em" }],
+        feature: ["40px", { lineHeight: "1.1", letterSpacing: "0" }],
+        "hero-sm": ["48px", { lineHeight: "1.08", letterSpacing: "-0.003em" }],
+        hero: ["80px", { lineHeight: "1.05", letterSpacing: "-0.015em" }],
+      },
+      letterSpacing: {
+        tight: "-0.015em",
+      },
+      borderRadius: {
+        card: "28px", // tarjetas e imágenes
+        tile: "18px", // tiles dentro de tarjetas
+        nav: "20px",
+        link: "10px",
+      },
+      boxShadow: {
+        // El DESIGN no usa sombras: solo contornos de 1 px en controles elegidos
+        subtle: "0 0 0 1px #e6e6e8",
+        "subtle-2": "0 0 0 1px #86868b",
+        thumb: "0 0 0 0.5px rgba(0, 0, 0, 0.04), 0 3px 8px rgba(0, 0, 0, 0.12)",
+      },
+      transitionTimingFunction: {
+        // Curvas de Emil Kowalski: fuertes, nunca ease-in en UI
+        out: "cubic-bezier(0.23, 1, 0.32, 1)",
+        "in-out": "cubic-bezier(0.77, 0, 0.175, 1)",
+        drawer: "cubic-bezier(0.32, 0.72, 0, 1)",
       },
     },
   },

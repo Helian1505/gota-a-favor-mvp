@@ -1,9 +1,19 @@
 @import "tailwindcss";
 @config "../../tailwind.config.ts";
 
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 body {
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-inter), "Helvetica Neue", Arial,
+    sans-serif;
+  letter-spacing: -0.016em;
   -webkit-font-smoothing: antialiased;
+  font-optical-sizing: auto;
+  font-feature-settings: "cv11", "ss03";
 }
 
 button {
@@ -14,12 +24,103 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Respuesta al presionar: instantánea al bajar, 160 ms al soltar (Emil). */
+.presionable {
+  transition-property: transform, background-color, border-color, color;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-out);
+}
+.presionable:active:not(:disabled) {
+  transform: scale(0.97);
+  transition-duration: 100ms;
+}
+
+/* Material translúcido para barras flotantes (Apple). */
+.material {
+  background-color: rgb(255 255 255 / 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .material {
+    background-color: rgb(255 255 255);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* Entrada de mensajes y respuestas: sin JS, desde su origen. */
+.entra {
+  transition:
+    opacity 240ms var(--ease-out),
+    transform 240ms var(--ease-out),
+    filter 240ms var(--ease-out);
+  @starting-style {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+.entra-derecha {
+  transform-origin: bottom right;
+}
+.entra-izquierda {
+  transform-origin: bottom left;
+}
+/* Cambio de contenido en su lugar (ficha de cliente): crossfade con blur. */
+.cruza {
+  transition:
+    opacity 200ms var(--ease-out),
+    filter 200ms var(--ease-out);
+  @starting-style {
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+/* Aviso anclado abajo: entra desde el borde inferior. */
+.sube {
+  transition:
+    opacity 300ms var(--ease-drawer),
+    transform 300ms var(--ease-drawer);
+  @starting-style {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+/* Aparición al hacer scroll, solo en el inicio (Revelador.tsx). Una vez, 600 ms. */
+.revela {
+  transition:
+    opacity 600ms var(--ease-out),
+    transform 600ms var(--ease-out);
+}
+.revela-activo .revela:not([data-visible]) {
+  opacity: 0;
+  transform: translateY(16px);
+}
+/* Escalonado corto entre hermanos (60 ms), decorativo: nunca bloquea. */
+.revela[data-visible]:nth-child(2) {
+  transition-delay: 60ms;
+}
+.revela[data-visible]:nth-child(3) {
+  transition-delay: 120ms;
+}
+.revela[data-visible]:nth-child(4) {
+  transition-delay: 180ms;
+}
+
+/* Movimiento reducido: menos y más suave, no cero. Se quitan los desplazamientos. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  .presionable:active:not(:disabled) {
+    transform: none;
+  }
+  .entra,
+  .sube {
+    @starting-style {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  html {
+    scroll-behavior: auto;
   }
 }

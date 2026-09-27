@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
+import { Inter } from "next/font/google";
 import "./globals.css";
+
+// Sustituto de SF Pro según DESIGN (1); en equipos Apple se usa SF Pro del sistema.
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", axes: ["opsz"], display: "swap" });
 
 const urlSitio = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
@@ -27,13 +29,13 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FAF8F3",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${GeistSans.variable} ${GeistMono.variable} bg-ivory`}>
-      <body className="min-h-dvh bg-ivory text-ink">{children}</body>
+    <html lang="es" className={`${inter.variable} bg-card`}>
+      <body className="min-h-dvh bg-card text-ink">{children}</body>
     </html>
   );
 }
