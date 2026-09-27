@@ -88,7 +88,7 @@ public/renders/        capturas de las vistas para el inicio (scripts/renders.mj
 
 - **Sistema visual: DESIGN (1), galería blanca al estilo Apple.**
   - Lienzo blanco, bandas `#f5f5f7` y texto `#1d1d1f`.
-  - Un solo azul: `#0066cc` para enlaces y `#0071e3` para botones de acción.
+  - Color de acción: el navy de la marca (`#13294b`) en botones, enlaces, burbujas del usuario, barras de avance y foco. Reemplaza al azul genérico del DESIGN. El dorado (`#c29a5b`) queda para el punto de la gota y la barra de efectivo alta.
   - Tarjetas de 28 px sin borde ni sombra, y botones en píldora.
   - Los tokens están en `tailwind.config.ts`; ningún componente usa hex sueltos.
 - **Tipografía.** SF Pro en equipos Apple e Inter (el sustituto que indica el DESIGN) en los demás, cargada con `next/font`. El tracking y el interlineado van por tamaño (`text-hero`, `text-body`, `text-caption`…). Los números usan cifras tabulares.
@@ -142,13 +142,14 @@ Cambios para que las cifras y el mensaje coincidan con el documento entregado:
    - banda de destacados con tres tarjetas grandes;
    - sección editorial del mecanismo;
    - cierre con el logo apilado.
-4. **Chat del cliente al estilo Mensajes:** globos grises y azules y barras translúcidas.
+4. **Chat del cliente al estilo Mensajes:** globos grises y navy, y barras translúcidas.
 5. **Recaudador con banda oscura** y aviso de efectivo anclado abajo.
 6. **Plataforma sobre banda gris** con tarjetas de 28 px, filtro de ruta como control segmentado y montos que se ajustan al ancho de su tarjeta.
 7. **Movimiento** según las skills *apple-design*, *emil-design-eng*, *find-animation-opportunities*, *improve-animations* y *animate*.
    - *animate-expo* no aplica: es para React Native.
    - De *ui-ux-pro-max* se tomaron el patrón "Trust & Authority", los anti-patrones (sin degradados ni estilo lúdico) y el checklist de entrega. Su paleta oscura no se usó porque contradice el DESIGN elegido.
-8. **Verificación:**
+8. **Colores de marca en la acción:** botones, enlaces, burbujas del usuario, barras de avance y foco pasan del azul genérico del DESIGN al navy de la marca.
+9. **Verificación:**
    - lint, 39 pruebas y build sin errores;
    - Lighthouse 100 en accesibilidad, buenas prácticas y SEO en las 8 rutas, en celular y escritorio;
    - Playwright recorre los flujos a 390 y 1440 px.

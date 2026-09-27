@@ -109,7 +109,7 @@ function NavSecciones({ actual, className, item }: { actual: string; className: 
 }
 
 function OtrasVistas() {
-  const enlace = `inline-flex min-h-8 items-center rounded-link px-1.5 py-1.5 text-caption text-blue underline-offset-4 hover:underline ${transicion} ${foco}`;
+  const enlace = `inline-flex min-h-8 items-center rounded-link px-1.5 py-1.5 text-caption font-medium text-brand-navy underline-offset-4 hover:underline ${transicion} ${foco}`;
   return (
     <nav aria-label="Otras vistas del prototipo" className="flex flex-wrap items-center gap-x-2 gap-y-1">
       <Link href="/" className={enlace}>

@@ -2,9 +2,9 @@ import type { Config } from "tailwindcss";
 
 /**
  * Tokens de Gota a favor, según DESIGN (1): galería blanca estilo Apple.
- * Lienzo blanco, bandas #f5f5f7, texto #1d1d1f y un solo azul para enlaces y
- * acciones. El navy y el dorado quedan para la marca. Nunca hex sueltos en
- * los componentes.
+ * Lienzo blanco, bandas #f5f5f7 y texto #1d1d1f. El color de acción es el
+ * navy de la marca (no el azul genérico del DESIGN) y el dorado queda para
+ * acentos de marca. Nunca hex sueltos en los componentes.
  */
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
@@ -24,10 +24,6 @@ const config: Config = {
         muted: "#707070", // Slate: texto secundario
         steel: "#86868b", // contornos de píldoras y entradas
         "on-dark": "#a1a1a6", // texto secundario sobre fondo oscuro
-        // Acción
-        blue: "#0066cc", // Apple Blue: enlaces
-        "blue-fill": "#0071e3", // Pricing Blue: botones de acción
-        "blue-deep": "#0060c0", // presión y hover de los botones azules
         // Estados
         orange: "#b64400", // Launch Orange: etiquetas de estado
         "orange-soft": "#fff3eb",
@@ -36,8 +32,10 @@ const config: Config = {
         "green-soft": "#e8f5eb",
         red: "#c4001a",
         "red-soft": "#fdecee",
-        // Marca (logo)
+        // Marca (logo). El navy es el color de acción: botones, enlaces,
+        // burbujas del usuario, barras de avance y foco.
         "brand-navy": "#13294b",
+        "brand-navy-deep": "#0b1a33", // hover y presión de los botones navy
         gold: "#c29a5b", // punto de la gota y barra de efectivo alta
         "gold-text": "#8a6530", // "favor" del logotipo en texto (contraste AA)
       },

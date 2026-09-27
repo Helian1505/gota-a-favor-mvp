@@ -14,7 +14,7 @@ import { clienteDemo, MES_FLUJO_POSITIVO } from "@/lib/datos";
 import { useRutasSeleccionadas } from "./Shell";
 import { Chip, EncabezadoTarjeta, Kpi, Tarjeta } from "./ui";
 
-const colorFuente = ["bg-blue-fill", "bg-gold", "bg-ink-soft"] as const;
+const colorFuente = ["bg-brand-navy", "bg-gold", "bg-ink-soft"] as const;
 
 const roles = [
   {

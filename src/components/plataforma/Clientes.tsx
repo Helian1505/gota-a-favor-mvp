@@ -93,7 +93,7 @@ export function Clientes() {
                   onClick={() => setFiltro(f.id)}
                   className={`presionable h-9 rounded-full border px-3.5 text-body-sm font-medium ${foco} ${
                     filtro === f.id
-                      ? "border-blue-fill bg-blue-fill text-white hover:bg-blue-deep"
+                      ? "border-brand-navy bg-brand-navy text-white hover:bg-brand-navy-deep"
                       : "border-steel bg-card text-ink-soft hover:border-ink hover:text-ink"
                   }`}
                 >
@@ -131,7 +131,7 @@ export function Clientes() {
                             type="button"
                             aria-pressed={activo}
                             onClick={() => elegir(c.id)}
-                            className={`flex min-h-11 w-full flex-col justify-center rounded-link px-1 text-left hover:text-blue ${foco}`}
+                            className={`flex min-h-11 w-full flex-col justify-center rounded-link px-1 text-left font-medium hover:text-brand-navy ${foco}`}
                           >
                             <span className="font-semibold">{c.nombre}</span>
                             <span className="text-caption text-muted">{c.negocio}</span>

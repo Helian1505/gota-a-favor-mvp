@@ -98,7 +98,7 @@ export function Distribuidores() {
                     <span className="flex items-center gap-2">
                       <span className="flex gap-1" aria-hidden>
                         {p.avance.cuotas.map((_, i) => (
-                          <span key={i} className={`size-2 rounded-full ${i < p.avance.hechas ? "bg-blue-fill" : "bg-control"}`} />
+                          <span key={i} className={`size-2 rounded-full ${i < p.avance.hechas ? "bg-brand-navy" : "bg-control"}`} />
                         ))}
                       </span>
                       <span className="tabular-nums text-caption">

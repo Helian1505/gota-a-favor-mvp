@@ -5,7 +5,7 @@ import { foco, transicion } from "../estilos";
 
 /**
  * Piezas del tablero según DESIGN (1): tarjetas blancas de 28 px sin borde ni
- * sombra sobre la banda #f5f5f7, tiles internos en #f5f5f7 y enlaces azules.
+ * sombra sobre la banda #f5f5f7, tiles internos en #f5f5f7 y enlaces en navy de la marca.
  */
 
 export function Tarjeta({ children, className = "", id }: { children: ReactNode; className?: string; id?: string }) {
@@ -32,7 +32,7 @@ export function EncabezadoTarjeta({
       {enlace && (
         <Link
           href={enlace.href}
-          className={`inline-flex min-h-8 items-center gap-0.5 rounded-link text-body-sm text-blue underline-offset-4 hover:underline ${transicion} ${foco}`}
+          className={`inline-flex min-h-8 items-center gap-0.5 rounded-link text-body-sm font-medium text-brand-navy underline-offset-4 hover:underline ${transicion} ${foco}`}
         >
           {enlace.label}
           <ChevronRight size={16} strokeWidth={1.75} aria-hidden />
@@ -103,7 +103,7 @@ export function Barra({
       className={`${alto} overflow-hidden rounded-full bg-control`}
     >
       <div
-        className={`${alto} w-full origin-left rounded-full bg-blue-fill transition-transform duration-300 ease-out motion-reduce:transition-none`}
+        className={`${alto} w-full origin-left rounded-full bg-brand-navy transition-transform duration-300 ease-out motion-reduce:transition-none`}
         style={{ transform: `scaleX(${f})` }}
       />
     </div>

@@ -1,10 +1,14 @@
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { BarraDemo } from "@/components/BarraDemo";
 import { Logotipo } from "@/components/Marca";
 import { Revelador } from "@/components/Revelador";
 import { foco, transicion } from "@/components/estilos";
+// Importación estática: Next pone un hash de contenido en la URL, así un render nuevo nunca sale de caché.
+import renderCliente from "../../public/renders/cliente.png";
+import renderPlataforma from "../../public/renders/plataforma.png";
+import renderRecaudador from "../../public/renders/recaudador.png";
 
 const vistas = [
   {
@@ -12,21 +16,21 @@ const vistas = [
     kicker: "Cliente",
     titulo: "Tu plata, a tu nombre. Por WhatsApp.",
     texto: "Marta ve su extracto semanal, baja su cuota, pide una emergencia o resuelve su primera urgencia.",
-    render: { src: "/renders/cliente.png", ancho: 780, alto: 1688 },
+    render: renderCliente,
   },
   {
     href: "/recaudador",
     kicker: "Recaudador",
     titulo: "La ruta del barrio, con comprobante.",
     texto: "Registra cada visita, envía el comprobante y cuida el efectivo en mano hasta la tienda-punto.",
-    render: { src: "/renders/recaudador.png", ancho: 780, alto: 1688 },
+    render: renderRecaudador,
   },
   {
     href: "/plataforma",
     kicker: "Plataforma",
     titulo: "El piloto, por dentro.",
     texto: "Seguimiento, rutas, clientes, aliado y comisiones, y distribuidores, con cifras del mes 7.",
-    render: { src: "/renders/plataforma.png", ancho: 1920, alto: 1200 },
+    render: renderPlataforma,
   },
 ] as const;
 
@@ -37,7 +41,7 @@ const pasos = [
   { titulo: "Crédito que solo baja", texto: "Tu racha abre crédito regulado; la cuota puede bajar, nunca subir." },
 ];
 
-const enlaceAzul = `inline-flex min-h-11 items-center gap-0.5 rounded-link text-body text-blue underline-offset-4 hover:underline ${transicion} ${foco}`;
+const enlaceMarca = `inline-flex min-h-11 items-center gap-0.5 rounded-link text-body font-medium text-brand-navy underline-offset-4 hover:underline ${transicion} ${foco}`;
 
 export default function Inicio() {
   return (
@@ -67,11 +71,11 @@ export default function Inicio() {
             <div className="mt-2 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
               <Link
                 href="/cliente"
-                className={`presionable inline-flex h-11 items-center rounded-full bg-blue-fill px-6 text-body font-medium text-white hover:bg-blue-deep ${foco}`}
+                className={`presionable inline-flex h-11 items-center rounded-full bg-brand-navy px-6 text-body font-medium text-white hover:bg-brand-navy-deep ${foco}`}
               >
                 Ver la demo
               </Link>
-              <Link href="#mecanismo" className={enlaceAzul}>
+              <Link href="#mecanismo" className={enlaceMarca}>
                 Cómo funciona
                 <ChevronRight size={18} strokeWidth={1.75} aria-hidden />
               </Link>
@@ -80,9 +84,9 @@ export default function Inicio() {
           </div>
 
           <div className="mx-auto mt-14 flex max-w-[760px] items-end justify-center gap-4 sm:gap-8 md:mt-16">
-            <Telefono src="/renders/recaudador.png" alt="" className="hidden translate-y-10 sm:block" />
+            <Telefono src={renderRecaudador} alt="" className="hidden translate-y-10 sm:block" />
             <Telefono
-              src="/renders/cliente.png"
+              src={renderCliente}
               alt="El chat del cliente: extracto semanal con ahorro, bolsillo arriendo y cuota de la semana"
               prioridad
             />
@@ -96,7 +100,7 @@ export default function Inicio() {
               <h2 id="vistas-titulo" className="font-display text-[32px] leading-tight font-semibold md:text-feature">
                 Recorre el prototipo.
               </h2>
-              <Link href="/cliente" className={enlaceAzul}>
+              <Link href="/cliente" className={enlaceMarca}>
                 Empezar por el cliente
                 <ChevronRight size={18} strokeWidth={1.75} aria-hidden />
               </Link>
@@ -112,17 +116,15 @@ export default function Inicio() {
                       <p className="text-body-sm font-semibold text-ink">{v.kicker}</p>
                       <h3 className="font-display text-feature-sm font-semibold text-ink">{v.titulo}</h3>
                       <p className="text-body text-muted">{v.texto}</p>
-                      <span className="mt-1 inline-flex items-center gap-0.5 text-body text-blue group-hover:underline">
+                      <span className="mt-1 inline-flex items-center gap-0.5 text-body font-medium text-brand-navy group-hover:underline">
                         Abrir
                         <ChevronRight size={18} strokeWidth={1.75} aria-hidden />
                       </span>
                     </div>
                     <div className="relative mt-auto h-64 overflow-hidden">
                       <Image
-                        src={v.render.src}
+                        src={v.render}
                         alt=""
-                        width={v.render.ancho}
-                        height={v.render.alto}
                         sizes="(min-width: 1024px) 380px, 90vw"
                         className={
                           v.href === "/plataforma"
@@ -194,7 +196,7 @@ function Telefono({
   className = "",
   prioridad = false,
 }: {
-  src: string;
+  src: StaticImageData;
   alt: string;
   className?: string;
   prioridad?: boolean;
@@ -204,8 +206,6 @@ function Telefono({
       <Image
         src={src}
         alt={alt}
-        width={780}
-        height={1688}
         priority={prioridad}
         sizes="270px"
         className="h-auto w-full rounded-[36px] sm:rounded-[41px]"

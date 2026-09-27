@@ -127,7 +127,7 @@ export function ChatCliente() {
             className="h-1.5 overflow-hidden rounded-full bg-control"
           >
             <div
-              className="h-1.5 w-full origin-left rounded-full bg-blue-fill"
+              className="h-1.5 w-full origin-left rounded-full bg-brand-navy"
               style={{ transform: `scaleX(${c.bolsilloArriendo / c.metaArriendo})` }}
             />
           </div>
@@ -209,7 +209,7 @@ function RespuestaBot({ children, className = "gap-2" }: { children: ReactNode; 
 
 function MensajeUsuario({ children }: { children: ReactNode }) {
   return (
-    <p className="entra entra-derecha max-w-[280px] self-end rounded-[22px] rounded-br-md bg-blue-fill px-4 py-2.5 text-[15px] text-white">
+    <p className="entra entra-derecha max-w-[280px] self-end rounded-[22px] rounded-br-md bg-brand-navy px-4 py-2.5 text-[15px] text-white">
       {children}
     </p>
   );
