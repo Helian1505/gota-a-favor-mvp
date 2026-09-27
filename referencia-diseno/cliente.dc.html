@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Gota a favor · Cliente</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@500&amp;display=swap">
+<style>
+body{margin:0;font-family:'Geist',system-ui,sans-serif;background:#FAF8F3;color:#0E1726}
+a{color:#1B2A4A}a:hover{color:#101B33}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #FAF8F3; overflow: hidden">
+  <div style="display: flex; align-items: center; gap: 12px; padding: 18px 18px 14px; background: #FFFFFF; border-bottom: 1px solid #E6E8EC">
+    <div style="width: 40px; height: 40px; border-radius: 12px; background: #1B2A4A; display: flex; align-items: center; justify-content: center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c3 4 6 7.2 6 10.5A6 6 0 0 1 6 13.5C6 10.2 9 7 12 3z"></path></svg>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+      <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.2px">Gota a favor</div>
+      <div style="font-size: 12px; color: #5A6473">Tu plata está a tu nombre en el aliado</div>
+    </div>
+    <div style="font-size: 11px; font-weight: 600; color: #6E5520; background: #F3EAD3; border-radius: 999px; padding: 4px 9px">Racha 8 sem.</div>
+  </div>
+
+  <div style="flex-grow: 1; overflow-y: auto; padding: 16px 14px; display: flex; flex-direction: column; gap: 12px">
+    <div style="align-self: center; font-size: 11px; color: #5A6473; background: #E9EBEF; border-radius: 999px; padding: 3px 10px">Lunes · extracto semanal</div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E6E8EC; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 14px; max-width: 320px">
+      <div style="font-size: 14px">Hola, Marta. Así va tu plata esta semana:</div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <div style="background: #F3F0E8; border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px">
+          <div style="font-size: 11px; color: #5A6473">Ahorro libre</div>
+          <div style="font-family: 'Geist Mono', monospace; font-size: 17px; font-weight: 500">{{ahorroLibre}}</div>
+          <div style="font-size: 11px; color: #5A6473">gana 3% EA</div>
+        </div>
+        <div style="background: #F3F0E8; border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px">
+          <div style="font-size: 11px; color: #5A6473">Bolsillo arriendo</div>
+          <div style="font-family: 'Geist Mono', monospace; font-size: 17px; font-weight: 500">$48.000</div>
+          <div style="font-size: 11px; color: #5A6473">meta $96.000 · día 30</div>
+        </div>
+      </div>
+      <div style="height: 6px; background: #E9EBEF; border-radius: 999px; overflow: hidden"><div style="width: 50%; height: 6px; background: #1B2A4A"></div></div>
+      <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px">
+        <div style="display: flex; justify-content: space-between"><span style="color: #5A6473">Crédito del día 1</span><span style="font-family: 'Geist Mono', monospace">{{saldoCredito}}</span></div>
+        <div style="display: flex; justify-content: space-between"><span style="color: #5A6473">Tasa</span><span>4% mensual</span></div>
+        <div style="display: flex; justify-content: space-between"><span style="color: #5A6473">Cuota de esta semana</span><span style="font-family: 'Geist Mono', monospace; font-weight: 600">{{cuota}}</span></div>
+        <div style="display: flex; justify-content: space-between"><span style="color: #5A6473">Próxima recogida</span><span>jueves, 10:00–12:00</span></div>
+      </div>
+      <div style="font-size: 12px; color: #5A6473; border-top: 1px solid #EEF0F3; padding-top: 10px">Recoger tu cuota no tiene costo. Recoger ahorro a domicilio: $1.500 si depositas $20.000 o más; en la tienda-punto o por Nequi es gratis.</div>
+    </div>
+
+    <sc-if value="{{showBajar}}" hint-placeholder-val="{{ false }}">
+      <div style="align-self: flex-end; background: #1B2A4A; color: #FFFFFF; border-radius: 16px 16px 4px 16px; padding: 10px 14px; font-size: 14px">BAJAR</div>
+      <div style="background: #FFFFFF; border: 1px solid #E6E8EC; border-radius: 16px; padding: 14px 16px; font-size: 14px; display: flex; flex-direction: column; gap: 8px; max-width: 320px">
+        <div style="font-weight: 600">Listo, esta semana pagas el mínimo.</div>
+        <div>Tu cuota baja de $23.245 a <span style="font-family: 'Geist Mono', monospace; font-weight: 600">$11.622</span>. La diferencia se corre al final del plazo, con su interés. Tu cuota nunca sube.</div>
+        <div style="font-size: 12px; color: #5A6473">Tu racha se mantiene: bajar la cuota es un derecho, no un atraso.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{showEmergencia}}" hint-placeholder-val="{{ false }}">
+      <div style="align-self: flex-end; background: #1B2A4A; color: #FFFFFF; border-radius: 16px 16px 4px 16px; padding: 10px 14px; font-size: 14px">EMERGENCIA</div>
+      <div style="background: #FFFFFF; border: 1px solid #E6E8EC; border-radius: 16px; padding: 14px 16px; font-size: 14px; display: flex; flex-direction: column; gap: 10px; max-width: 320px">
+        <div style="font-weight: 600">Tienes un cupo pre-aprobado por tu racha.</div>
+        <div>¿Cuánto necesitas hoy?</div>
+        <div style="display: flex; gap: 8px">
+          <sc-for list="{{montos}}" as="m" hint-placeholder-count="3">
+            <button type="button" onClick="{{ m.pick }}" style="{{ m.style }}">{{ m.label }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{montoElegido}}" hint-placeholder-val="{{ false }}">
+          <div style="background: #F3EAD3; border-radius: 12px; padding: 10px 12px; font-size: 13px; color: #3F3515">Aprobado: {{montoTexto}}. Te lo entrega hoy tu recaudador o llega a tu Nequi. Tasa 4% mensual, cuotas en tu ruta.</div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{showMisma}}" hint-placeholder-val="{{ false }}">
+      <div style="align-self: flex-end; background: #1B2A4A; color: #FFFFFF; border-radius: 16px 16px 4px 16px; padding: 10px 14px; font-size: 14px">¿Qué pasa cuando termine de pagar?</div>
+      <div style="background: #FFFFFF; border: 1px solid #E6E8EC; border-radius: 16px; padding: 14px 16px; font-size: 14px; display: flex; flex-direction: column; gap: 8px; max-width: 320px">
+        <div style="font-weight: 600">Misma cuota, ahora para ti.</div>
+        <div>La ruta sigue pasando y tus $23.245 semanales van a tu ahorro. En 12 semanas serían unos $279.000 a tu nombre, y tu próximo crédito para surtido baja a 4,5% mensual.</div>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="background: #FFFFFF; border-top: 1px solid #E6E8EC; padding: 12px 14px 18px; display: flex; flex-direction: column; gap: 8px">
+    <div style="font-size: 11px; color: #5A6473">Respuestas rápidas</div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap">
+      <button type="button" onClick="{{ bajar }}" style="height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid #D8CFB8; background: #FFFFFF; color: #1B2A4A; font-size: 14px; font-weight: 600">Bajar cuota</button>
+      <button type="button" onClick="{{ emergencia }}" style="height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid #D8CFB8; background: #FFFFFF; color: #1B2A4A; font-size: 14px; font-weight: 600">Emergencia</button>
+      <button type="button" onClick="{{ misma }}" style="height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid #D8CFB8; background: #FFFFFF; color: #1B2A4A; font-size: 14px; font-weight: 600">Al terminar</button>
+    </div>
+    <button type="button" onClick="{{ reset }}" style="align-self: flex-start; height: 32px; padding: 0; border: 0; background: transparent; color: #5A6473; font-size: 12px">Reiniciar demo</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { bajar: false, emergencia: false, misma: false, monto: 0 };
+  }
+  fmt(n) { return '$' + Math.round(n).toLocaleString('es-CO'); }
+  renderVals() {
+    const s = this.state;
+    const opciones = [150000, 200000, 300000];
+    const montos = opciones.map((v) => ({
+      label: this.fmt(v),
+      pick: () => this.setState({ monto: v }),
+      style: 'height: 44px; padding: 0 12px; border-radius: 12px; font-size: 13px; font-weight: 600; ' +
+        (s.monto === v ? 'border: 1px solid #1B2A4A; background: #1B2A4A; color: #FFFFFF' : 'border: 1px solid #D8CFB8; background: #FFFFFF; color: #1B2A4A')
+    }));
+    return {
+      ahorroLibre: '$156.649',
+      saldoCredito: '$34.867',
+      cuota: s.bajar ? '$11.622' : '$23.245',
+      showBajar: s.bajar,
+      showEmergencia: s.emergencia,
+      showMisma: s.misma,
+      montos,
+      montoElegido: s.monto > 0,
+      montoTexto: this.fmt(s.monto),
+      bajar: () => this.setState({ bajar: true }),
+      emergencia: () => this.setState({ emergencia: true }),
+      misma: () => this.setState({ misma: true }),
+      reset: () => this.setState({ bajar: false, emergencia: false, misma: false, monto: 0 })
+    };
+  }
+}
+</script>
+</body>
+</html>
