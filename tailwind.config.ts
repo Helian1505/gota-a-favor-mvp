@@ -35,6 +35,10 @@ const config: Config = {
         "warn-line": "#E9D48A",
         "warn-ink": "#3F3515",
       },
+      boxShadow: {
+        suave: "0 1px 2px rgba(14, 23, 38, 0.04)",
+        marco: "0 1px 2px rgba(14, 23, 38, 0.04), 0 18px 48px -24px rgba(14, 23, 38, 0.18)",
+      },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
