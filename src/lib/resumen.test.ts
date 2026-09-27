@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { clientesRuta, rutas } from "./datos";
-import { resumenPlataforma, resumenRuta } from "./resumen";
+import { clientesPlataforma, clientesRuta, pedidos15, rutas } from "./datos";
+import {
+  detalleCliente,
+  economiaMes,
+  filtrarClientes,
+  resumenPedidos,
+  resumenPlataforma,
+  resumenRuta,
+} from "./resumen";
 
 describe("resumenRuta", () => {
   it("empieza en cero", () => {
@@ -53,5 +60,41 @@ describe("resumenPlataforma", () => {
     expect(t.compuertas[0].ok).toBe(false);
     expect(t.compuertas[3].ok).toBe(false);
     expect(t.pedidos15.porPagar).toBe(700_000);
+  });
+});
+
+describe("secciones de la plataforma", () => {
+  it("los pedidos a 15 días cuadran por ruta y ninguno está vencido", () => {
+    const todos = resumenPedidos(pedidos15);
+    expect(todos.totales).toMatchObject({ activos: 9, valor: 7_000_000, recaudado: 3_850_000, vencidos: 0 });
+    const r1 = resumenPlataforma(rutas.filter((r) => r.id === "r1"));
+    expect(r1.pedidos15).toMatchObject({ activos: 7, valor: 5_600_000, recaudado: 3_150_000, porPagar: 2_450_000 });
+    const valle = todos.distribuidores.find((d) => d.nombre === "Distribuidora del Valle");
+    expect(valle?.activos).toBe(3);
+  });
+
+  it("la economía del mes suma comisiones y tarifas, y descuenta el pago a recaudadores", () => {
+    const e = economiaMes(rutas);
+    expect(e.totalComisiones).toBe(145 * 11_212);
+    expect(e.porRuta[0].visitasConTarifa).toBe(Math.round(117 * 0.58 * 4));
+    expect(e.porRuta[0].pagoRecaudador).toBeCloseTo(271 * 900 + 12_400_000 * 0.0045, 6);
+    expect(e.margen).toBeCloseTo(e.totalComisiones + e.tarifas - e.pagoRecaudadores, 6);
+  });
+
+  it("el detalle del cliente aplica tasas, mínimo y emergencia", () => {
+    const marta = detalleCliente(clientesPlataforma[0]);
+    expect(marta.tasa).toBe(0.04);
+    expect(marta.cuotaMinima).toBe(11_622);
+    expect(marta.tasaProximo).toBe(0.045);
+    expect(marta.emergencia.habilitado).toBe(true);
+    const luz = detalleCliente(clientesPlataforma[2]);
+    expect(luz.ahorroPrimero).toBe(true);
+    expect(luz.semanasParaEvaluacion).toBe(3);
+  });
+
+  it("filtra clientes por tipo y por nombre sin importar tildes", () => {
+    expect(filtrarClientes(clientesPlataforma, "minimo").map((c) => c.nombre)).toEqual(["Yesenia", "Arepas Doña Nelly"]);
+    expect(filtrarClientes(clientesPlataforma, "todos", "oscar")).toHaveLength(1);
+    expect(filtrarClientes(clientesPlataforma, "racha").every((c) => c.rachaSemanas >= 8)).toBe(true);
   });
 });

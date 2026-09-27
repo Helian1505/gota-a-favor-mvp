@@ -168,6 +168,38 @@ export function pedidoProveedor(monto: number, recogidas: number) {
   };
 }
 
+/** Estado de un pedido a 15 días: lo recaudado en las recogidas hechas y lo que falta. */
+export function avancePedido(monto: number, recogidas: number, recogidasHechas: number, diasDesdeEntrega: number) {
+  const p = pedidoProveedor(monto, recogidas);
+  const hechas = Math.min(recogidas, Math.max(0, Math.floor(recogidasHechas)));
+  const recaudado = p.cuotas.slice(0, hechas).reduce((a, b) => a + b, 0);
+  return {
+    ...p,
+    hechas,
+    recaudado,
+    falta: monto - recaudado,
+    diasParaPago: Math.max(0, DIA_PAGO_DISTRIBUIDOR - diasDesdeEntrega),
+    vencido: diasDesdeEntrega > DIA_PAGO_DISTRIBUIDOR && recaudado < monto,
+  };
+}
+
+/** Tasa del crédito activo: el del día 1 va al 4%; los productivos según su historial. */
+export function tasaCreditoActual(tipo: "dia1" | "surtido", creditosPagadosATiempo: number): number {
+  return tipo === "dia1" ? TASA_CREDITO_DIA1 : tasaCreditoProductivo(creditosPagadosATiempo);
+}
+
+/** Tasa del próximo crédito productivo si el actual se paga a tiempo. */
+export function tasaProximoCredito(creditosPagadosATiempo: number): number {
+  return tasaCreditoProductivo(creditosPagadosATiempo + 1);
+}
+
+/** Pago del mes al recaudador: $900 por visita con tarifa + 0,3 × 1,5% de las cuotas recogidas. */
+export function pagoRecaudadorMes(visitasConTarifa: number, cuotasRecogidas: number): number {
+  return (
+    Math.round(visitasConTarifa) * PAGO_POR_VISITA_CON_TARIFA + cuotasRecogidas * COMISION_RECAUDO * PARTE_RECAUDADOR
+  );
+}
+
 // Primera urgencia -------------------------------------------------------------
 
 export type Urgencia = "pedido" | "arriendo" | "efectivo";

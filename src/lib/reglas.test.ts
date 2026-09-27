@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  avancePedido,
   bajarCuota,
   botonEmergencia,
   cuotaMinima,
@@ -153,5 +154,20 @@ describe("formato", () => {
     expect(pesos(1_500)).toBe("$1.500");
     expect(pesos(900)).toBe("$900");
     expect(pesos(11_622.5)).toBe("$11.623");
+  });
+});
+
+describe("avancePedido", () => {
+  it("suma lo recaudado en las recogidas hechas y cuenta los días para pagar", () => {
+    const a = avancePedido(1_000_000, 4, 1, 4);
+    expect(a.recaudado).toBe(250_000);
+    expect(a.falta).toBe(750_000);
+    expect(a.diasParaPago).toBe(11);
+    expect(a.vencido).toBe(false);
+  });
+
+  it("queda vencido si pasa el día 15 sin completar", () => {
+    expect(avancePedido(800_000, 4, 3, 16).vencido).toBe(true);
+    expect(avancePedido(800_000, 4, 4, 16).vencido).toBe(false);
   });
 });
