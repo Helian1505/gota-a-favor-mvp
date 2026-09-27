@@ -1,4 +1,4 @@
-// Capturas de las cuatro rutas en 390×844 y 1440×900 para revisión visual.
+// Capturas de todas las rutas en 390×844 y 1440×900 para revisión visual.
 // Uso: node scripts/capturas.mjs [urlBase] [carpetaSalida]
 // Usa el Chrome o Edge instalado (sin descargar navegadores).
 import { chromium } from "playwright";
@@ -6,7 +6,16 @@ import { mkdir } from "node:fs/promises";
 
 const base = process.argv[2] ?? "http://localhost:3000";
 const salida = process.argv[3] ?? "capturas";
-const rutas = ["/", "/cliente", "/recaudador", "/plataforma"];
+const rutas = [
+  "/",
+  "/cliente",
+  "/recaudador",
+  "/plataforma",
+  "/plataforma/rutas",
+  "/plataforma/clientes",
+  "/plataforma/aliado",
+  "/plataforma/distribuidores",
+];
 const tamanos = [
   { nombre: "movil", width: 390, height: 844 },
   { nombre: "escritorio", width: 1440, height: 900 },
@@ -28,7 +37,7 @@ for (const t of tamanos) {
   page.on("pageerror", (e) => errores.push(`${t.nombre} ${page.url()}: ${e.message}`));
   for (const r of rutas) {
     await page.goto(base + r, { waitUntil: "networkidle" });
-    const nombre = r === "/" ? "inicio" : r.slice(1);
+    const nombre = r === "/" ? "inicio" : r.slice(1).replace("/", "-");
     await page.screenshot({ path: `${salida}/${nombre}-${t.nombre}.png`, fullPage: true });
     const ancho = await page.evaluate(() => document.documentElement.scrollWidth);
     if (ancho > t.width) errores.push(`${t.nombre} ${r}: scroll horizontal (${ancho}px)`);

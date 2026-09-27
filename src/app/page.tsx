@@ -22,7 +22,7 @@ const vistas: { href: string; titulo: string; tipo: string; texto: string; Icono
     href: "/plataforma",
     titulo: "Plataforma",
     tipo: "Tablero de escritorio",
-    texto: "Seguimiento del piloto: rutas, referentes, compuertas, comisiones y alertas.",
+    texto: "El piloto por dentro: seguimiento, rutas, clientes, aliado y comisiones, y distribuidores.",
     Icono: LayoutDashboard,
   },
 ];

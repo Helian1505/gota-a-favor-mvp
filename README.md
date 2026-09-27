@@ -17,7 +17,13 @@ Todo el MVP usa **datos de ejemplo**.
 | `/` | El proyecto en 3 líneas, las tres vistas y el mecanismo en 4 pasos: Referente → Ruta → Ahorro a tu nombre → Crédito que solo baja. |
 | `/cliente` | Chat tipo WhatsApp de Marta: extracto semanal, bajar cuota, emergencia, "al terminar" y primera urgencia (pedido, arriendo o efectivo). |
 | `/recaudador` | La ruta de hoy: 6 clientes de la referencia más una visita de pedido a 15 días, comprobantes, pago del recaudador y efectivo en mano con tope. |
-| `/plataforma` | Tablero del piloto: filtros por ruta, indicadores, rutas y referentes, comisiones, pedidos a 15 días, compuertas y alertas. |
+| `/plataforma` | Seguimiento del piloto: indicadores, rutas y referentes, comisiones, pedidos a 15 días, compuertas y alertas. |
+| `/plataforma/rutas` | Cada ruta con sus indicadores, el camino a 400 clientes (contrato laboral), el pago estimado del recaudador y la ruta de hoy. |
+| `/plataforma/clientes` | Muestra de 12 clientes con búsqueda, filtros y una ficha con tasa, cuota mínima, botón de emergencia y próximo crédito. |
+| `/plataforma/aliado` | Quién hace qué, comisiones del mes por fuente, economía de la operación y tasas del aliado. |
+| `/plataforma/distribuidores` | Distribuidores y pedidos a 15 días: recogidas por visita, lo recaudado y el pago del día 15. |
+
+Las pestañas Todas las rutas / Ruta 1 / Ruta 2 recalculan cada sección, y el filtro se mantiene al pasar de una sección a otra.
 
 ## Cómo correrlo
 
@@ -49,7 +55,8 @@ node scripts/capturas.mjs http://localhost:3000 capturas
   - botón de emergencia con racha de 8 semanas o más, entre $150.000 y $300.000;
   - una ruta pasa a contrato laboral al llegar a 400 clientes;
   - pedido al proveedor dividido en recogidas y pagado al distribuidor el día 15.
-- Recalcula el tablero completo al cambiar de ruta, incluidas las compuertas del piloto.
+- Recalcula la plataforma completa al cambiar de ruta, incluidas las compuertas del piloto.
+- Navega las cinco secciones de la plataforma, cada una con su propia URL.
 - Accesibilidad: Lighthouse 100 en las cuatro rutas, en celular y escritorio.
 
 ## Qué todavía no hace
@@ -58,17 +65,17 @@ node scripts/capturas.mjs http://localhost:3000 capturas
 - **No conecta con un aliado**: no hay cuentas, cartera ni evaluación de crédito reales.
 - **No mueve dinero**: los montos, aprobaciones y consignaciones son simulados.
 - **No guarda datos**: todo vive en el estado de React y se reinicia al recargar la página.
-- No tiene inicio de sesión, roles ni las secciones Rutas, Clientes, Aliado y comisiones o Distribuidores de la plataforma (solo Seguimiento).
+- No tiene inicio de sesión ni roles, y la plataforma no edita datos: solo los muestra.
 
 ## Estructura
 
 ```
 src/
   app/                 rutas (/, /cliente, /recaudador, /plataforma), íconos y metadatos
-  components/          marca (logo), marco de teléfono, chat, ruta y tablero
+  components/          marca (logo), marco de teléfono, chat, ruta y plataforma (una vista por sección)
   lib/
     reglas.ts          reglas de negocio (con reglas.test.ts)
-    resumen.ts         cálculos de la ruta y del tablero (con resumen.test.ts)
+    resumen.ts         cálculos de la ruta, del tablero y de las secciones (con resumen.test.ts)
     datos.ts           datos de ejemplo
     formato.ts         moneda colombiana: $23.245
 referencia-diseno/     HTML de diseño aprobados, tablero de marca y script que extrae el logo
