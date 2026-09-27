@@ -146,7 +146,7 @@ export default function Inicio() {
             <div className="revela flex max-w-[760px] flex-col gap-4">
               <p className="font-display text-kicker font-semibold text-orange">El mecanismo</p>
               <h2 id="mecanismo-titulo" className="font-display text-[32px] leading-tight font-semibold md:text-hero-sm">
-                Cuatro pasos. Tu plata nunca pasa por nosotros.
+                Cuatro pasos. Tu plata nunca se queda con nosotros.
               </h2>
               <p className="text-body text-muted">
                 La primera urgencia se resuelve cambiando la fecha de pago con quien cobra, el proveedor o el
