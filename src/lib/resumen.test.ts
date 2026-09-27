@@ -113,6 +113,9 @@ describe("secciones de la plataforma", () => {
     expect(marta.tasa).toBe(0.04);
     expect(marta.cuotaMinima).toBe(11_622);
     expect(marta.tasaProximo).toBe(0.05);
+    const jairo = detalleCliente(clientesPlataforma[1]);
+    expect(jairo.creditosSurtidoPagados).toBe(1);
+    expect(jairo.tasaProximo).toBe(0.045);
     const fruver = detalleCliente(clientesPlataforma[3]);
     expect(fruver.tasa).toBe(0.04);
     expect(marta.emergencia.habilitado).toBe(true);

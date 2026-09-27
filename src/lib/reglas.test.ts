@@ -8,13 +8,13 @@ import {
   montoEmergenciaValido,
   pagoRecaudador,
   pedidoProveedor,
+  tasaCreditoActual,
   proyeccionAhorro,
   puedeRecibir,
   rutaFormal,
   rutaPrimeraUrgencia,
   abonosArriendo,
   tarifaRecogida,
-  tasaProximoSurtido,
   tasaSemanalEquivalente,
   tasaSurtido,
   visitasConTarifaMes,
@@ -69,8 +69,8 @@ describe("tasas", () => {
   });
 
   it("el crédito del día 1 no cuenta en la escalera de surtido", () => {
-    expect(tasaProximoSurtido(0, false)).toBe(0.05);
-    expect(tasaProximoSurtido(1, true)).toBe(0.04);
+    expect(tasaCreditoActual("dia1", 2)).toBe(0.04);
+    expect(tasaCreditoActual("surtido", 0)).toBe(0.05);
   });
 });
 

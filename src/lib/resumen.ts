@@ -12,7 +12,7 @@ import {
   rutaFormal,
   tarifaRecogida,
   tasaCreditoActual,
-  tasaProximoSurtido,
+  tasaSurtido,
 } from "./reglas";
 
 // Ruta del recaudador ------------------------------------------------------------
@@ -151,7 +151,7 @@ export function detalleCliente(c: ClientePlataforma) {
     emergencia,
     tasa: c.credito ? tasaCreditoActual(c.credito.tipo, c.creditosSurtidoPagados) : null,
     cuotaMinima: c.credito ? cuotaMinima(c.credito.cuota) : null,
-    tasaProximo: tasaProximoSurtido(c.creditosSurtidoPagados, c.credito?.tipo === "surtido"),
+    tasaProximo: tasaSurtido(c.creditosSurtidoPagados),
     ahorroPrimero: c.reportado && !c.credito,
     semanasParaEvaluacion: Math.max(0, RACHA_EMERGENCIA - c.rachaSemanas),
   };

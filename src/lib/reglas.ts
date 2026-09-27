@@ -209,14 +209,6 @@ export function tasaCreditoActual(tipo: "dia1" | "surtido", creditosSurtidoPagad
   return tipo === "dia1" ? TASA_CREDITO_DIA1 : tasaSurtido(creditosSurtidoPagados);
 }
 
-/**
- * Tasa del próximo crédito de surtido. Si hoy tiene uno de surtido activo, se
- * asume que lo paga a tiempo y cuenta como uno más en la escalera.
- */
-export function tasaProximoSurtido(creditosSurtidoPagados: number, tieneSurtidoActivo: boolean): number {
-  return tasaSurtido(creditosSurtidoPagados + (tieneSurtidoActivo ? 1 : 0));
-}
-
 // Economía del mes ---------------------------------------------------------------
 
 /** Recogidas que hace una ruta a cada cliente en un mes. */
