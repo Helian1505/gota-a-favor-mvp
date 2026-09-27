@@ -216,7 +216,7 @@ export const clientesPlataforma: ClientePlataforma[] = [
   { id: 7, nombre: "Tienda Doña Rubiela", negocio: "Tienda de barrio", ruta: "r1", rachaSemanas: 12, ahorro: 265_000, reportado: false, creditosSurtidoPagados: 0, credito: null, pidioMinimo: false, canal: "Recogida a domicilio" },
   { id: 8, nombre: "Panadería El Trigal", negocio: "Panadería", ruta: "r1", rachaSemanas: 10, ahorro: 230_000, reportado: false, creditosSurtidoPagados: 1, credito: surtido(350_000, 33_000), pidioMinimo: false, canal: "Tienda-punto" },
   { id: 9, nombre: "Minimercado Los Paisas", negocio: "Minimercado", ruta: "r1", rachaSemanas: 8, ahorro: 175_000, reportado: true, creditosSurtidoPagados: 0, credito: null, pidioMinimo: false, canal: "Recogida a domicilio" },
-  { id: 10, nombre: "Cacharrería La Esquina", negocio: "Cacharrería", ruta: "r2", rachaSemanas: 6, ahorro: 64_000, reportado: false, creditosSurtidoPagados: 1, credito: dia1(120_000), pidioMinimo: false, canal: "Recogida a domicilio" },
+  { id: 10, nombre: "Cacharrería La Esquina", negocio: "Cacharrería", ruta: "r2", rachaSemanas: 6, ahorro: 64_000, reportado: false, creditosSurtidoPagados: 0, credito: dia1(120_000), pidioMinimo: false, canal: "Recogida a domicilio" },
   { id: 11, nombre: "Tienda Don Óscar", negocio: "Tienda de barrio", ruta: "r2", rachaSemanas: 4, ahorro: 38_000, reportado: true, creditosSurtidoPagados: 0, credito: null, pidioMinimo: false, canal: "Nequi" },
   { id: 12, nombre: "Arepas Doña Nelly", negocio: "Venta de arepas", ruta: "r2", rachaSemanas: 7, ahorro: 71_000, reportado: false, creditosSurtidoPagados: 0, credito: dia1(150_000), pidioMinimo: true, canal: "Recogida a domicilio" },
 ];
