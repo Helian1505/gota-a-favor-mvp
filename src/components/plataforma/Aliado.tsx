@@ -2,16 +2,15 @@
 
 import { Check, X } from "lucide-react";
 import { pesos, porcentaje, tasa } from "@/lib/formato";
-import { economiaMes, resumenPlataforma } from "@/lib/resumen";
+import { economiaPlataforma, resumenPlataforma } from "@/lib/resumen";
 import {
-  AHORRO_MINIMO_CON_TARIFA,
   PAGO_POR_VISITA_CON_TARIFA,
   TARIFA_RECOGIDA,
   TASA_CREDITO_DIA1,
-  tasaCreditoProductivo,
   tasaSemanalEquivalente,
+  tasaSurtido,
 } from "@/lib/reglas";
-import { clienteDemo } from "@/lib/datos";
+import { clienteDemo, MES_FLUJO_POSITIVO } from "@/lib/datos";
 import { useRutasSeleccionadas } from "./Shell";
 import { Chip, EncabezadoTarjeta, Kpi, Tarjeta } from "./ui";
 
@@ -46,14 +45,15 @@ const roles = [
 export function Aliado() {
   const sel = useRutasSeleccionadas();
   const t = resumenPlataforma(sel);
-  const e = economiaMes(sel);
+  const e = economiaPlataforma(sel);
+  const flujoRedondeado = Math.round(e.flujo / 100_000) * 100_000;
 
   const tasas = [
     { producto: "Ahorro libre", condicion: "a nombre del cliente", valor: `${tasa(clienteDemo.ahorroTasaEA)} EA` },
     { producto: "Crédito del día 1", condicion: "$150.000 a $300.000", valor: `${tasa(TASA_CREDITO_DIA1)} mensual` },
-    { producto: "Primer crédito de surtido", condicion: "sin créditos pagados", valor: `${tasa(tasaCreditoProductivo(0))} mensual` },
-    { producto: "Surtido, tras 1 a tiempo", condicion: "baja 0,5 puntos", valor: `${tasa(tasaCreditoProductivo(1))} mensual` },
-    { producto: "Surtido, tras 2 o más", condicion: "piso de la tasa", valor: `${tasa(tasaCreditoProductivo(2))} mensual` },
+    { producto: "Primer crédito de surtido", condicion: "el del día 1 no cuenta", valor: `${tasa(tasaSurtido(0))} mensual` },
+    { producto: "Surtido, tras 1 a tiempo", condicion: "baja 0,5 puntos", valor: `${tasa(tasaSurtido(1))} mensual` },
+    { producto: "Surtido, tras 2 o más", condicion: "piso de la tasa", valor: `${tasa(tasaSurtido(2))} mensual` },
     {
       producto: "Bajar cuota",
       condicion: "diferencia al final con interés",
@@ -135,21 +135,31 @@ export function Aliado() {
           <dl className="flex flex-col gap-2 text-[13px]">
             <FilaMonto etiqueta="Comisiones" valor={e.totalComisiones} />
             <FilaMonto
-              etiqueta={`Tarifas de recogida (${pesos(TARIFA_RECOGIDA)} con ahorro de ${pesos(AHORRO_MINIMO_CON_TARIFA)} o más)`}
+              etiqueta={`Tarifas de recogida (${e.visitasConTarifa} visitas × ${pesos(TARIFA_RECOGIDA)})`}
               valor={e.tarifas}
             />
+            <FilaMonto etiqueta="Impago: devolución de la originación" valor={-e.devolucionImpago} />
             <FilaMonto etiqueta="Pago a recaudadores" valor={-e.pagoRecaudadores} />
-            <div className="flex items-baseline justify-between gap-3 border-t border-divider pt-2">
-              <dt className="font-semibold">Margen de la operación</dt>
-              <dd className="font-mono text-base font-semibold">{pesos(e.margen)}</dd>
-            </div>
+            <FilaMonto etiqueta="Tienda-punto, WhatsApp y nube" valor={-e.plataforma} />
+            <FilaTotal etiqueta="Contribución de la operación" valor={pesos(e.contribucion)} />
+            <FilaMonto
+              etiqueta={sel.length > 1 ? "Costos fijos del mes" : "Costos fijos del mes (asignados por clientes)"}
+              valor={-e.costosFijos}
+            />
+            <FilaMonto etiqueta="Bonos de referido y kits (clientes nuevos)" valor={-e.bonosNuevos} />
+            <FilaTotal etiqueta="Flujo del mes" valor={`≈ ${pesos(flujoRedondeado)}`} negativo={e.flujo < 0} />
           </dl>
-          <ul className="mt-1 flex flex-col gap-2">
+          <p className="rounded-[10px] bg-bordeaux-soft px-3 py-2.5 text-xs text-bordeaux">
+            El piloto todavía no cubre sus costos fijos; según el modelo, el flujo mensual se vuelve positivo en el mes{" "}
+            {MES_FLUJO_POSITIVO}.
+          </p>
+          <ul className="flex flex-col gap-2">
             {e.porRuta.map((r) => (
               <li key={r.id} className="rounded-[10px] bg-ivory px-3 py-2.5 text-xs text-muted">
                 <span className="font-semibold text-ink">{r.ruta}</span> · {r.recaudador}: {r.visitasConTarifa} visitas
-                con tarifa, pago de <span className="font-mono text-ink">{pesos(r.pagoRecaudador)}</span> ({pesos(PAGO_POR_VISITA_CON_TARIFA)}{" "}
-                por visita + 30% del 1,5% de las cuotas).
+                con tarifa y <span className="font-mono text-ink">{pesos(r.cuotasRecogidas)}</span> en cuotas
+                recogidas. Pago de <span className="font-mono text-ink">{pesos(r.pagoRecaudador)}</span> (
+                {pesos(PAGO_POR_VISITA_CON_TARIFA)} por visita + 30% del 1,5% de las cuotas).
               </li>
             ))}
           </ul>
@@ -171,6 +181,15 @@ export function Aliado() {
         </div>
       </Tarjeta>
     </>
+  );
+}
+
+function FilaTotal({ etiqueta, valor, negativo = false }: { etiqueta: string; valor: string; negativo?: boolean }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3 border-t border-divider pt-2">
+      <dt className="font-semibold">{etiqueta}</dt>
+      <dd className={`shrink-0 font-mono text-base font-semibold ${negativo ? "text-bordeaux" : ""}`}>{valor}</dd>
+    </div>
   );
 }
 

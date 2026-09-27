@@ -5,6 +5,7 @@ import { useEffect, useReducer, useRef, type ReactNode } from "react";
 import { clienteDemo as c } from "@/lib/datos";
 import { pesos, tasa } from "@/lib/formato";
 import {
+  abonosArriendo,
   bajarCuota,
   botonEmergencia,
   EMERGENCIA_MAX,
@@ -12,7 +13,7 @@ import {
   pedidoProveedor,
   proyeccionAhorro,
   TASA_CREDITO_DIA1,
-  tasaCreditoProductivo,
+  tasaSurtido,
   type Urgencia,
 } from "@/lib/reglas";
 import { MarcaCuadro } from "../Marca";
@@ -54,6 +55,8 @@ function reducer(s: Estado, a: Accion): Estado {
 const bajada = bajarCuota(c.cuota, c.semanasHastaElFinal);
 const emergencia = botonEmergencia(c.rachaSemanas);
 const pedido = pedidoProveedor(c.pedidoEjemplo.monto, c.pedidoEjemplo.recogidas);
+const arriendo = abonosArriendo(c.arriendoEjemplo.monto, c.arriendoEjemplo.abonos);
+const escaleraSurtido = [0, 1, 2].map((n) => tasaSurtido(c.creditosSurtidoPagados + n));
 
 const respuestasRapidas: { entrada: Entrada; label: string }[] = [
   { entrada: "bajar", label: "Bajar cuota" },
@@ -299,8 +302,8 @@ function RespuestaMisma() {
         La ruta sigue pasando y tus {pesos(c.cuota)} semanales van a tu ahorro. En {c.semanasProyeccion} semanas
         serían unos{" "}
         <span className="font-mono font-semibold">{pesos(proyeccionAhorro(c.cuota, c.semanasProyeccion))}</span> a
-        tu nombre, y tu próximo crédito para surtido baja a {tasa(tasaCreditoProductivo(c.creditosPagadosATiempo))}{" "}
-        mensual.
+        tu nombre, y tu primer crédito para surtido sale al {tasa(escaleraSurtido[0])} mensual y baja a{" "}
+        {tasa(escaleraSurtido[1])} y luego a {tasa(escaleraSurtido[2])} si lo pagas a tiempo.
       </p>
     </RespuestaBot>
   );
@@ -338,8 +341,8 @@ function RespuestaUrgencia({
       {urgencia === "pedido" && (
         <div className="flex flex-col gap-2.5">
           <AvisoDorado>
-            Tu distribuidor te entrega hoy y te cobra a 15 días; tu recaudador recoge la cuota en cada visita y le
-            paga el día {pedido.diaPagoDistribuidor}.
+            Tu distribuidor te entrega hoy y te cobra a 15 días; tu recaudador recoge la cuota en cada visita, queda
+            en tu bolsillo en el aliado y el día {pedido.diaPagoDistribuidor} se le transfiere desde tu cuenta.
           </AvisoDorado>
           <div className="flex flex-col gap-2 rounded-xl bg-surface px-3 py-2.5">
             <p className="text-[11px] text-muted">
@@ -354,17 +357,25 @@ function RespuestaUrgencia({
               ))}
             </ol>
             <p className="text-[11px] text-muted">
-              {pedido.cuotas.length} recogidas de {pesos(pedido.cuotaPorRecogida)} · pago al distribuidor el día{" "}
-              {pedido.diaPagoDistribuidor}
+              {pedido.cuotas.length} recogidas de {pesos(pedido.cuotaPorRecogida)} · se transfiere al distribuidor el
+              día {pedido.diaPagoDistribuidor}
             </p>
           </div>
         </div>
       )}
 
       {urgencia === "arriendo" && (
-        <AvisoDorado>
-          Acordamos con quien te cobra que reciba por partes lo que recoge tu ruta, pagado directo.
-        </AvisoDorado>
+        <div className="flex flex-col gap-2.5">
+          <AvisoDorado>
+            Acordamos con quien te cobra que reciba por partes lo que recoge tu ruta, pagado directo.
+          </AvisoDorado>
+          <p className="rounded-xl bg-surface px-3 py-2.5 text-[13px]">
+            Ejemplo: un arriendo de <span className="font-mono">{pesos(arriendo.total)}</span> que vence el{" "}
+            {c.arriendoEjemplo.diaVence}. Acordamos con el arrendador {arriendo.abonos.length} abonos de{" "}
+            <span className="font-mono">{pesos(arriendo.abono)}</span>. Tu ruta los recoge, entran a tu bolsillo
+            arriendo en el aliado y se le transfieren directo. Sin crédito y sin interés.
+          </p>
+        </div>
       )}
 
       {urgencia === "efectivo" && (

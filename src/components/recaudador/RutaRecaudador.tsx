@@ -155,7 +155,7 @@ function TarjetaCliente({
 
   let nota = "Comprobante enviado por WhatsApp · sin costo para el cliente";
   if (c.pedido) {
-    nota = `Comprobante enviado por WhatsApp · cuota ${c.pedido.cuotaNumero} de ${c.pedido.totalCuotas} del pedido, se paga al distribuidor el día 15 · sin costo`;
+    nota = `Comprobante enviado por WhatsApp · cuota ${c.pedido.cuotaNumero} de ${c.pedido.totalCuotas} del pedido, queda en su bolsillo en el aliado y el día 15 se transfiere al distribuidor · sin costo`;
   } else if (visita.tarifa > 0) {
     nota = `Comprobante enviado por WhatsApp · recogida de ahorro ${pesos(visita.tarifa)} (cuota sin costo)`;
   }

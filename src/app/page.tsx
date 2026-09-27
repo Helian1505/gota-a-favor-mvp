@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, LayoutDashboard, MessageCircle, Route, type LucideIcon } from "lucide-react";
-import { LogoCompleto, MarcaCuadro } from "@/components/Marca";
+import { MarcaCuadro, MarcaOscura } from "@/components/Marca";
 import { foco, transicion } from "@/components/estilos";
 
 const vistas: { href: string; titulo: string; tipo: string; texto: string; Icono: LucideIcon }[] = [
@@ -68,8 +68,12 @@ export default function Inicio() {
               </p>
             </div>
           </div>
-          <div className="flex items-center justify-center rounded-2xl border border-line bg-card px-8 py-10 shadow-suave">
-            <LogoCompleto ancho={300} className="h-auto w-full max-w-[300px]" />
+          <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-line bg-card px-6 py-10 text-center shadow-suave sm:flex-row sm:px-8 sm:text-left">
+            <MarcaOscura tamano={96} />
+            <div className="flex flex-col gap-1.5">
+              <p className="text-4xl font-semibold tracking-tight text-navy">Gota a favor</p>
+              <p className="text-sm font-medium tracking-wide text-gold-ink">Tu ahorro, a tu nombre</p>
+            </div>
           </div>
         </section>
 

@@ -18,9 +18,13 @@ export function Distribuidores() {
   return (
     <>
       <section aria-label="Indicadores de pedidos" className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <Kpi label="Distribuidores con pedidos" valor={String(distribuidores.length)} sub="pagados directo por la ruta" />
+        <Kpi label="Distribuidores con pedidos" valor={String(distribuidores.length)} sub="se les transfiere desde la cuenta del cliente" />
         <Kpi label="Pedidos activos" valor={String(totales.activos)} sub={`por ${pesos(totales.valor)}`} />
-        <Kpi label="Recaudado en ruta" valor={pesos(totales.recaudado)} sub={`${porcentaje(totales.recaudado / (totales.valor || 1))} del total`} />
+        <Kpi
+          label="Recaudado en ruta"
+          valor={pesos(totales.recaudado)}
+          sub={`${porcentaje(totales.recaudado / (totales.valor || 1))} del total, en el bolsillo de cada cliente en el aliado; se transfiere al distribuidor el día 15`}
+        />
         <Kpi
           label="Falta pagar al distribuidor"
           valor={pesos(totales.porPagar)}
@@ -29,8 +33,10 @@ export function Distribuidores() {
       </section>
 
       <p className="rounded-xl border border-gold/30 bg-gold-soft px-4 py-2.5 text-[13px] text-gold-ink">
-        El distribuidor entrega hoy y cobra a 15 días. El recaudador recoge la cuota en cada visita y le paga el día{" "}
-        {DIA_PAGO_DISTRIBUIDOR}: la urgencia se resuelve cambiando la fecha con quien cobra, sin crédito.
+        El distribuidor entrega hoy y cobra a 15 días. El recaudador recoge la cuota en cada visita, queda en el
+        bolsillo de cada cliente en el aliado y el día {DIA_PAGO_DISTRIBUIDOR} se le transfiere desde la cuenta del
+        cliente: la urgencia se resuelve cambiando la fecha con quien cobra, sin crédito y sin que nadie más guarde
+        la plata.
       </p>
 
       <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -56,7 +62,7 @@ export function Distribuidores() {
                 </span>
               </div>
               <Barra fraccion={d.recaudado / (d.valor || 1)} etiqueta={`${d.nombre}: recaudado frente al valor`} />
-              <p className="text-xs text-muted">Próximo pago {enDias(d.proximoPago)}</p>
+              <p className="text-xs text-muted">Próxima transferencia {enDias(d.proximoPago)}</p>
             </Tarjeta>
           </li>
         ))}
@@ -73,7 +79,7 @@ export function Distribuidores() {
                 <th scope="col" className="py-1.5 pr-2 text-right font-normal">Pedido</th>
                 <th scope="col" className="py-1.5 pr-2 font-normal">Recogidas</th>
                 <th scope="col" className="py-1.5 pr-2 text-right font-normal">Recaudado</th>
-                <th scope="col" className="py-1.5 pr-2 font-normal">Pago al distribuidor</th>
+                <th scope="col" className="py-1.5 pr-2 font-normal">Transferencia al distribuidor</th>
                 <th scope="col" className="py-1.5 font-normal">Estado</th>
               </tr>
             </thead>

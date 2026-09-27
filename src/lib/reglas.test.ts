@@ -12,9 +12,12 @@ import {
   puedeRecibir,
   rutaFormal,
   rutaPrimeraUrgencia,
+  abonosArriendo,
   tarifaRecogida,
-  tasaCreditoProductivo,
+  tasaProximoSurtido,
   tasaSemanalEquivalente,
+  tasaSurtido,
+  visitasConTarifaMes,
 } from "./reglas";
 import { pesos, tasa } from "./formato";
 
@@ -57,12 +60,17 @@ describe("tasas", () => {
     expect(Math.pow(1 + s, 52 / 12) - 1).toBeCloseTo(0.04, 10);
   });
 
-  it("los créditos productivos empiezan en 5% y bajan 0,5 puntos hasta 4%", () => {
-    expect(tasaCreditoProductivo(0)).toBe(0.05);
-    expect(tasaCreditoProductivo(1)).toBe(0.045);
-    expect(tasaCreditoProductivo(2)).toBe(0.04);
-    expect(tasaCreditoProductivo(10)).toBe(0.04);
-    expect(tasa(tasaCreditoProductivo(1))).toBe("4,5%");
+  it("tasaSurtido: max(4, 5 − 0,5 × n) % mensual", () => {
+    expect(tasaSurtido(0)).toBe(0.05);
+    expect(tasaSurtido(1)).toBe(0.045);
+    expect(tasaSurtido(2)).toBe(0.04);
+    expect(tasaSurtido(10)).toBe(0.04);
+    expect([0, 1, 2].map((n) => tasa(tasaSurtido(n)))).toEqual(["5%", "4,5%", "4%"]);
+  });
+
+  it("el crédito del día 1 no cuenta en la escalera de surtido", () => {
+    expect(tasaProximoSurtido(0, false)).toBe(0.05);
+    expect(tasaProximoSurtido(1, true)).toBe(0.04);
   });
 });
 
@@ -169,5 +177,21 @@ describe("avancePedido", () => {
   it("queda vencido si pasa el día 15 sin completar", () => {
     expect(avancePedido(800_000, 4, 3, 16).vencido).toBe(true);
     expect(avancePedido(800_000, 4, 4, 16).vencido).toBe(false);
+  });
+});
+
+describe("arriendo por abonos", () => {
+  it("un arriendo de $400.000 queda en 4 abonos de $100.000, sin crédito ni interés", () => {
+    const a = abonosArriendo(400_000, 4);
+    expect(a.abonos).toEqual([100_000, 100_000, 100_000, 100_000]);
+    expect(a.credito).toBe(false);
+    expect(a.interes).toBe(0);
+  });
+});
+
+describe("visitas con tarifa", () => {
+  it("clientes × % que paga la recogida × 8,7 recogidas al mes", () => {
+    expect(visitasConTarifaMes(117, 0.58)).toBe(590);
+    expect(visitasConTarifaMes(28, 0.61)).toBe(149);
   });
 });

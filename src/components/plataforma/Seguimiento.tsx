@@ -75,11 +75,11 @@ export function Seguimiento() {
               </table>
             </TablaDesplazable>
             <div className="mt-auto grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-              <Mini titulo="Comisiones del mes" valor={pesos(t.comisiones)} nota="aliado, distribuidor, microseguro" />
+              <Mini titulo="Comisiones del mes" valor={pesos(t.comisiones)} nota="aliado, distribuidor, microseguro y facturas" />
               <Mini
                 titulo="Pedidos de surtido financiados"
                 valor={String(t.pedidosSurtido)}
-                nota="pagados directo al distribuidor"
+                nota="se transfieren directo al distribuidor"
               />
               <Mini
                 titulo="Capital de trabajo en rutas"
@@ -96,7 +96,11 @@ export function Seguimiento() {
             />
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
               <Mini titulo="Pedidos activos" valor={String(t.pedidos15.activos)} nota={`por ${pesos(t.pedidos15.valor)}`} />
-              <Mini titulo="Recaudado en ruta" valor={pesos(t.pedidos15.recaudado)} nota="listo para el día 15" />
+              <Mini
+                titulo="Recaudado en ruta"
+                valor={pesos(t.pedidos15.recaudado)}
+                nota="en el bolsillo de cada cliente en el aliado; se transfiere al distribuidor el día 15"
+              />
               <Mini
                 titulo="Falta pagar al distribuidor"
                 valor={pesos(t.pedidos15.porPagar)}

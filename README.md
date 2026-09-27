@@ -49,8 +49,10 @@ node scripts/capturas.mjs http://localhost:3000 capturas
 - Aplica las reglas de negocio de `src/lib/reglas.ts`, cubiertas por pruebas:
   - tarifa de recogida de $1.500 solo si el ahorro es de $20.000 o más (la cuota nunca paga tarifa);
   - cuota mínima del 50%, con la diferencia corrida al final del plazo y su interés a la tasa semanal equivalente;
-  - crédito del día 1 al 4% mensual; créditos productivos del 5% que bajan 0,5 puntos por crédito pagado a tiempo, hasta 4%;
+  - crédito del día 1 al 4% mensual; crédito de surtido con `tasaSurtido(n) = max(4, 5 − 0,5 × n)` % mensual, donde n son los créditos de surtido pagados a tiempo (el del día 1 no cuenta);
   - pago del recaudador: $900 por visita con tarifa, más 0,3 × 1,5% de la cuota recogida;
+  - economía del mes calculada con los valores por cliente del documento (comisiones, cuotas recogidas, impago y costos), con 8,7 recogidas al mes por cliente;
+  - arriendo o servicios por abonos, sin crédito y sin interés;
   - efectivo en mano con tope de $500.000, barra dorada al pasar el 60% y aviso desde $300.000;
   - botón de emergencia con racha de 8 semanas o más, entre $150.000 y $300.000;
   - una ruta pasa a contrato laboral al llegar a 400 clientes;
@@ -86,7 +88,29 @@ public/marca/          logo en PNG transparente (navy y marfil)
 
 - Estilo Linear/Apple con los colores de las camisetas del FC Versailles 26/27. Los tokens están en `tailwind.config.ts` (`navy`, `gold`, `bordeaux`, `ivory`…) y ningún componente usa hex sueltos.
 - Geist y Geist Mono (paquete `geist`); los números siempre van en Geist Mono. Íconos de `lucide-react` con trazo 1,75.
-- El logo sale del tablero de marca (`referencia-diseno/logo-tablero-marca.png`). `referencia-diseno/extraer-logo.py` lo recorta, le quita el fondo y lo pasa a los colores planos de la paleta. Se usa en el inicio, los encabezados, el favicon y la imagen para compartir.
+- El logo sale del tablero de marca (`referencia-diseno/logo-tablero-marca.png`). `referencia-diseno/extraer-logo.py` recorta solo la gota, le quita el fondo y la pasa a los colores planos de la paleta. El nombre "Gota a favor" (con f minúscula) va en HTML, y el lema es "Tu ahorro, a tu nombre". La gota se usa en el inicio, los encabezados, el favicon y la imagen para compartir.
+
+## Ajustes después de la entrega (27 sep 2026)
+
+Cambios para que las cifras y el mensaje coincidan con el documento entregado:
+
+1. **Logo sin "Crédito que te impulsa".** El lema contradecía el mensaje central (Gota a favor no presta). El inicio ahora usa la gota con el texto "Gota a favor" en HTML y el lema "Tu ahorro, a tu nombre". También se quitaron los PNG del logo completo y se regeneró la imagen para compartir. El nombre se escribe siempre "Gota a favor".
+2. **Escalera de tasas 5% → 4,5% → 4%.** Nueva función `tasaSurtido(n)` en `lib/reglas.ts`; el crédito del día 1 no cuenta. Cada cliente tiene el campo `creditosSurtidoPagados`.
+   - En /cliente, "Al terminar" ahora dice que el primer crédito de surtido sale al 5% y baja a 4,5% y luego a 4% si se paga a tiempo.
+   - En la ficha de /plataforma/clientes, "Próximo crédito de surtido" usa `tasaSurtido` (Marta: 5%).
+3. **Arriendo con ejemplo en números.** En /cliente → Primera urgencia → Arriendo o servicios, un arriendo de $400.000 queda en 4 abonos de $100.000, sin crédito y sin interés (`abonosArriendo`).
+4. **Nadie guarda plata.** En /plataforma y /plataforma/distribuidores:
+   - lo recaudado en pedidos queda "en el bolsillo de cada cliente en el aliado";
+   - "el día 15 se le transfiere desde la cuenta del cliente" reemplaza a "el recaudador le paga el día 15".
+   - El mismo cambio se hizo en el chat y en el comprobante del recaudador.
+5. **Cifras económicas del documento (mes 7, 145 clientes).** `modeloMensual` en `lib/datos.ts` guarda los valores por cliente al mes: aliado $2.706, distribuidor $675, microseguro y facturas $750, y $80.403 en cuotas recogidas. `economiaMes` en `lib/reglas.ts` calcula a partir de ellos:
+   - comisiones de $598.995;
+   - 739 visitas con tarifa;
+   - pago a recaudadores de $717.563 (Ruta 1 $573.332, Ruta 2 $144.231);
+   - contribución de $836.522;
+   - flujo del mes de ≈ −$8.600.000, con la nota de que el flujo se vuelve positivo en el mes 27.
+   - Las pestañas Ruta 1 y Ruta 2 recalculan todo; los costos fijos se asignan por número de clientes.
+6. **Detalles menores.** Los enlaces "Inicio", "Cliente" y "Recaudador" de la plataforma pasan de 20 a 32 px de alto, y se agregó esta sección al README.
 
 ## Herramientas y tiempo
 

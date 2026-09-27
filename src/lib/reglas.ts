@@ -16,15 +16,19 @@ export function tarifaRecogida(ahorro: number): number {
 // Tasas ----------------------------------------------------------------------
 
 export const TASA_CREDITO_DIA1 = 0.04;
-export const TASA_PRODUCTIVO_INICIAL = 0.05;
-export const TASA_PRODUCTIVO_PISO = 0.04;
+export const TASA_SURTIDO_INICIAL = 0.05;
+export const TASA_SURTIDO_PISO = 0.04;
 export const BAJA_POR_CREDITO_A_TIEMPO = 0.005;
 
-/** Créditos productivos: 5% mensual, bajan 0,5 puntos por crédito pagado a tiempo, hasta 4%. */
-export function tasaCreditoProductivo(creditosPagadosATiempo: number): number {
-  const pagados = Math.max(0, Math.floor(creditosPagadosATiempo));
-  const t = TASA_PRODUCTIVO_INICIAL - pagados * BAJA_POR_CREDITO_A_TIEMPO;
-  return Math.round(Math.max(TASA_PRODUCTIVO_PISO, t) * 10_000) / 10_000;
+/**
+ * Escalera de tasas del crédito de surtido: max(4%, 5% − 0,5 puntos × n), mensual,
+ * donde n son los créditos de surtido pagados a tiempo. El crédito del día 1 no
+ * cuenta. Devuelve la tasa como fracción (0,05 = 5% mensual), igual que las demás.
+ */
+export function tasaSurtido(creditosSurtidoPagadosATiempo: number): number {
+  const pagados = Math.max(0, Math.floor(creditosSurtidoPagadosATiempo));
+  const t = TASA_SURTIDO_INICIAL - pagados * BAJA_POR_CREDITO_A_TIEMPO;
+  return Math.round(Math.max(TASA_SURTIDO_PISO, t) * 10_000) / 10_000;
 }
 
 /** Tasa semanal equivalente a una tasa mensual (12 meses = 52 semanas). */
@@ -149,23 +153,37 @@ export function rutaFormal(clientes: number) {
 
 export const DIA_PAGO_DISTRIBUIDOR = 15;
 
+/** Divide un monto en abonos iguales; el último absorbe el redondeo. */
+export function dividirEnAbonos(monto: number, abonos: number): number[] {
+  if (!Number.isFinite(monto) || monto <= 0) throw new Error("El monto debe ser mayor que cero");
+  if (!Number.isInteger(abonos) || abonos < 1) throw new Error("Se necesita al menos un abono");
+  const base = Math.floor(monto / abonos);
+  return Array.from({ length: abonos }, (_, i) => (i === abonos - 1 ? monto - base * (abonos - 1) : base));
+}
+
 /**
  * El distribuidor entrega hoy y cobra a 15 días. El pedido se divide en
- * cuotas por visita (la última absorbe el redondeo) y se paga el día 15.
+ * cuotas por visita que quedan en el bolsillo del cliente en el aliado, y el
+ * día 15 se le transfieren al distribuidor desde la cuenta del cliente.
  */
 export function pedidoProveedor(monto: number, recogidas: number) {
-  if (!Number.isFinite(monto) || monto <= 0) throw new Error("El pedido debe ser mayor que cero");
-  if (!Number.isInteger(recogidas) || recogidas < 1) throw new Error("Se necesita al menos una recogida");
-  const base = Math.floor(monto / recogidas);
-  const cuotas = Array.from({ length: recogidas }, (_, i) =>
-    i === recogidas - 1 ? monto - base * (recogidas - 1) : base,
-  );
+  const cuotas = dividirEnAbonos(monto, recogidas);
   return {
-    cuotaPorRecogida: base,
+    cuotaPorRecogida: cuotas[0],
     cuotas,
     total: monto,
     diaPagoDistribuidor: DIA_PAGO_DISTRIBUIDOR,
   };
+}
+
+/**
+ * Arriendo o servicios: se acuerda con quien cobra recibir el pago por partes.
+ * La ruta recoge los abonos, entran al bolsillo arriendo del cliente en el
+ * aliado y se transfieren directo. Sin crédito y sin interés.
+ */
+export function abonosArriendo(monto: number, abonos: number) {
+  const partes = dividirEnAbonos(monto, abonos);
+  return { abono: partes[0], abonos: partes, total: monto, credito: false, interes: 0 } as const;
 }
 
 /** Estado de un pedido a 15 días: lo recaudado en las recogidas hechas y lo que falta. */
@@ -183,21 +201,104 @@ export function avancePedido(monto: number, recogidas: number, recogidasHechas: 
   };
 }
 
-/** Tasa del crédito activo: el del día 1 va al 4%; los productivos según su historial. */
-export function tasaCreditoActual(tipo: "dia1" | "surtido", creditosPagadosATiempo: number): number {
-  return tipo === "dia1" ? TASA_CREDITO_DIA1 : tasaCreditoProductivo(creditosPagadosATiempo);
+/**
+ * Tasa del crédito activo. El del día 1 va al 4%; uno de surtido sale a la tasa
+ * que le toca por los créditos de surtido que el cliente ya pagó a tiempo.
+ */
+export function tasaCreditoActual(tipo: "dia1" | "surtido", creditosSurtidoPagados: number): number {
+  return tipo === "dia1" ? TASA_CREDITO_DIA1 : tasaSurtido(creditosSurtidoPagados);
 }
 
-/** Tasa del próximo crédito productivo si el actual se paga a tiempo. */
-export function tasaProximoCredito(creditosPagadosATiempo: number): number {
-  return tasaCreditoProductivo(creditosPagadosATiempo + 1);
+/**
+ * Tasa del próximo crédito de surtido. Si hoy tiene uno de surtido activo, se
+ * asume que lo paga a tiempo y cuenta como uno más en la escalera.
+ */
+export function tasaProximoSurtido(creditosSurtidoPagados: number, tieneSurtidoActivo: boolean): number {
+  return tasaSurtido(creditosSurtidoPagados + (tieneSurtidoActivo ? 1 : 0));
 }
+
+// Economía del mes ---------------------------------------------------------------
+
+/** Recogidas que hace una ruta a cada cliente en un mes. */
+export const RECOGIDAS_POR_MES = 8.7;
 
 /** Pago del mes al recaudador: $900 por visita con tarifa + 0,3 × 1,5% de las cuotas recogidas. */
 export function pagoRecaudadorMes(visitasConTarifa: number, cuotasRecogidas: number): number {
   return (
     Math.round(visitasConTarifa) * PAGO_POR_VISITA_CON_TARIFA + cuotasRecogidas * COMISION_RECAUDO * PARTE_RECAUDADOR
   );
+}
+
+/** Visitas con tarifa en el mes: clientes × % que paga la recogida × 8,7 recogidas. */
+export function visitasConTarifaMes(clientes: number, pagaRecogida: number): number {
+  return Math.round(clientes * pagaRecogida * RECOGIDAS_POR_MES);
+}
+
+/** Valores por cliente activo al mes y costos del piloto (ver lib/datos.ts). */
+export interface ModeloMensual {
+  comisionesPorCliente: readonly { fuente: string; detalle: string; valor: number }[];
+  cuotasPorCliente: number;
+  devolucionImpagoPorCliente: number;
+  plataformaPorCliente: number;
+  costosFijosPiloto: number;
+  costoPorClienteNuevo: number;
+}
+
+export interface RutaEconomia {
+  id: string;
+  ruta: string;
+  recaudador: string;
+  clientes: number;
+  pagaRecogida: number;
+  clientesNuevosMes: number;
+}
+
+/**
+ * Economía del mes para las rutas elegidas, calculada desde los valores por
+ * cliente. Los costos fijos se asignan por número de clientes, así que con
+ * todas las rutas se ve el costo fijo completo del piloto.
+ */
+export function economiaMes(sel: RutaEconomia[], todas: RutaEconomia[], m: ModeloMensual) {
+  const clientes = sel.reduce((a, r) => a + r.clientes, 0);
+  const clientesPiloto = todas.reduce((a, r) => a + r.clientes, 0);
+  const comisiones = m.comisionesPorCliente.map((c) => ({ ...c, total: c.valor * clientes }));
+  const totalComisiones = comisiones.reduce((a, c) => a + c.total, 0);
+  const porRuta = sel.map((r) => {
+    const visitasConTarifa = visitasConTarifaMes(r.clientes, r.pagaRecogida);
+    const cuotasRecogidas = Math.round(r.clientes * m.cuotasPorCliente);
+    return {
+      id: r.id,
+      ruta: r.ruta,
+      recaudador: r.recaudador,
+      visitasConTarifa,
+      cuotasRecogidas,
+      tarifas: visitasConTarifa * TARIFA_RECOGIDA,
+      pagoRecaudador: pagoRecaudadorMes(visitasConTarifa, cuotasRecogidas),
+    };
+  });
+  const visitasConTarifa = porRuta.reduce((a, r) => a + r.visitasConTarifa, 0);
+  const tarifas = porRuta.reduce((a, r) => a + r.tarifas, 0);
+  const pagoRecaudadores = porRuta.reduce((a, r) => a + r.pagoRecaudador, 0);
+  const devolucionImpago = clientes * m.devolucionImpagoPorCliente;
+  const plataforma = clientes * m.plataformaPorCliente;
+  const contribucion = totalComisiones + tarifas - devolucionImpago - pagoRecaudadores - plataforma;
+  const costosFijos = clientesPiloto ? (m.costosFijosPiloto * clientes) / clientesPiloto : 0;
+  const bonosNuevos = sel.reduce((a, r) => a + r.clientesNuevosMes, 0) * m.costoPorClienteNuevo;
+  return {
+    clientes,
+    comisiones,
+    totalComisiones,
+    visitasConTarifa,
+    tarifas,
+    devolucionImpago,
+    pagoRecaudadores,
+    plataforma,
+    contribucion,
+    costosFijos,
+    bonosNuevos,
+    flujo: contribucion - costosFijos - bonosNuevos,
+    porRuta,
+  };
 }
 
 // Primera urgencia -------------------------------------------------------------

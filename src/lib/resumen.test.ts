@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { clientesPlataforma, clientesRuta, pedidos15, rutas } from "./datos";
+import { porcentaje } from "./formato";
 import {
   detalleCliente,
-  economiaMes,
+  economiaPlataforma,
   filtrarClientes,
   resumenPedidos,
   resumenPlataforma,
@@ -73,19 +74,47 @@ describe("secciones de la plataforma", () => {
     expect(valle?.activos).toBe(3);
   });
 
-  it("la economía del mes suma comisiones y tarifas, y descuenta el pago a recaudadores", () => {
-    const e = economiaMes(rutas);
-    expect(e.totalComisiones).toBe(145 * 11_212);
-    expect(e.porRuta[0].visitasConTarifa).toBe(Math.round(117 * 0.58 * 4));
-    expect(e.porRuta[0].pagoRecaudador).toBeCloseTo(271 * 900 + 12_400_000 * 0.0045, 6);
-    expect(e.margen).toBeCloseTo(e.totalComisiones + e.tarifas - e.pagoRecaudadores, 6);
+  it("la economía del mes coincide con el documento (mes 7, 145 clientes)", () => {
+    const e = economiaPlataforma(rutas);
+    const r = Math.round;
+    expect(e.totalComisiones).toBe(598_995);
+    expect(e.comisiones.map((c) => c.total)).toEqual([392_370, 97_875, 108_750]);
+    expect(e.comisiones.map((c) => porcentaje(c.total / e.totalComisiones))).toEqual(["66%", "16%", "18%"]);
+    expect(e.visitasConTarifa).toBe(739);
+    expect(e.tarifas).toBe(1_108_500);
+    expect(e.devolucionImpago).toBe(14_065);
+    expect(r(e.pagoRecaudadores)).toBe(717_563);
+    expect(e.plataforma).toBe(139_345);
+    expect(r(e.contribucion)).toBe(836_522);
+    expect(e.costosFijos).toBe(8_666_394);
+    expect(e.bonosNuevos).toBe(772_500);
+    expect(r(e.flujo / 100_000) * 100_000).toBe(-8_600_000);
+  });
+
+  it("por ruta: visitas, cuotas recogidas y pago del recaudador", () => {
+    const [r1, r2] = economiaPlataforma(rutas).porRuta;
+    expect([r1.visitasConTarifa, r1.cuotasRecogidas, Math.round(r1.pagoRecaudador)]).toEqual([590, 9_407_141, 573_332]);
+    expect([r2.visitasConTarifa, r2.cuotasRecogidas, Math.round(r2.pagoRecaudador)]).toEqual([149, 2_251_282, 144_231]);
+  });
+
+  it("las pestañas recalculan la economía de cada ruta", () => {
+    const soloR2 = economiaPlataforma(rutas.filter((x) => x.id === "r2"));
+    expect(soloR2.totalComisiones).toBe(28 * 4_131);
+    expect(Math.round(soloR2.pagoRecaudadores)).toBe(144_231);
+    expect(soloR2.costosFijos).toBeCloseTo((8_666_394 * 28) / 145, 6);
+  });
+
+  it("comisiones del mes en el tablero: $598.995", () => {
+    expect(resumenPlataforma(rutas).comisiones).toBe(598_995);
   });
 
   it("el detalle del cliente aplica tasas, mínimo y emergencia", () => {
     const marta = detalleCliente(clientesPlataforma[0]);
     expect(marta.tasa).toBe(0.04);
     expect(marta.cuotaMinima).toBe(11_622);
-    expect(marta.tasaProximo).toBe(0.045);
+    expect(marta.tasaProximo).toBe(0.05);
+    const fruver = detalleCliente(clientesPlataforma[3]);
+    expect(fruver.tasa).toBe(0.04);
     expect(marta.emergencia.habilitado).toBe(true);
     const luz = detalleCliente(clientesPlataforma[2]);
     expect(luz.ahorroPrimero).toBe(true);

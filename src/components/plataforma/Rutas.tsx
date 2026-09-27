@@ -2,14 +2,14 @@
 
 import { clientesRuta, metasPiloto } from "@/lib/datos";
 import { decimal, pesos, porcentaje } from "@/lib/formato";
-import { calcularVisita, economiaMes } from "@/lib/resumen";
+import { calcularVisita, economiaPlataforma } from "@/lib/resumen";
 import { ALERTA_EFECTIVO, CLIENTES_RUTA_FORMAL, rutaFormal, TOPE_EFECTIVO } from "@/lib/reglas";
 import { useRutasSeleccionadas } from "./Shell";
 import { Barra, Chip, EncabezadoTarjeta, Mini, TablaDesplazable, Tarjeta } from "./ui";
 
 export function Rutas() {
   const sel = useRutasSeleccionadas();
-  const economia = economiaMes(sel);
+  const economia = economiaPlataforma(sel);
   const incluyeRuta1 = sel.some((r) => r.id === "r1");
 
   return (
@@ -63,8 +63,8 @@ export function Rutas() {
                     <span className="font-mono font-semibold">{pesos(pago.pagoRecaudador)}</span>
                   </div>
                   <p className="text-xs text-muted">
-                    $900 × {pago.visitasConTarifa} visitas con tarifa, más el 30% del 1,5% de {pesos(r.cuotasMes)} en
-                    cuotas recogidas.
+                    $900 × {pago.visitasConTarifa} visitas con tarifa, más el 30% del 1,5% de{" "}
+                    {pesos(pago.cuotasRecogidas)} en cuotas recogidas.
                   </p>
                 </div>
               )}

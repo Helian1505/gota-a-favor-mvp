@@ -1,23 +1,19 @@
 import type { ClientePlataforma, ClienteRuta, Pedido15, Ruta } from "./datos";
-import { COMISION_POR_CLIENTE, comisionesPorCliente, metasPiloto, pedidos15 } from "./datos";
+import { COMISION_POR_CLIENTE, metasPiloto, modeloMensual, pedidos15, rutas } from "./datos";
 import { decimal, porcentaje } from "./formato";
 import {
   avancePedido,
   botonEmergencia,
   cuotaMinima,
+  economiaMes,
   estadoEfectivo,
   pagoRecaudador,
-  pagoRecaudadorMes,
   RACHA_EMERGENCIA,
   rutaFormal,
-  TARIFA_RECOGIDA,
   tarifaRecogida,
   tasaCreditoActual,
-  tasaProximoCredito,
+  tasaProximoSurtido,
 } from "./reglas";
-
-/** Semanas que se cuentan en un mes para las proyecciones. */
-export const SEMANAS_MES = 4;
 
 // Ruta del recaudador ------------------------------------------------------------
 
@@ -139,31 +135,9 @@ export function resumenPedidos(lista: Pedido15[]) {
 
 // Economía del mes ------------------------------------------------------------------
 
-export function economiaMes(sel: Ruta[]) {
-  const clientes = sel.reduce((a, r) => a + r.clientes, 0);
-  const comisiones = comisionesPorCliente.map((c) => ({ ...c, total: c.valor * clientes }));
-  const totalComisiones = comisiones.reduce((a, c) => a + c.total, 0);
-  const porRuta = sel.map((r) => {
-    const visitasConTarifa = Math.round(r.clientes * r.pagaRecogida * SEMANAS_MES);
-    return {
-      id: r.id,
-      ruta: r.ruta,
-      recaudador: r.recaudador,
-      visitasConTarifa,
-      tarifas: visitasConTarifa * TARIFA_RECOGIDA,
-      pagoRecaudador: pagoRecaudadorMes(visitasConTarifa, r.cuotasMes),
-    };
-  });
-  const tarifas = porRuta.reduce((a, r) => a + r.tarifas, 0);
-  const pagoRecaudadores = porRuta.reduce((a, r) => a + r.pagoRecaudador, 0);
-  return {
-    comisiones,
-    totalComisiones,
-    tarifas,
-    pagoRecaudadores,
-    margen: totalComisiones + tarifas - pagoRecaudadores,
-    porRuta,
-  };
+/** Economía del mes de las rutas elegidas, con el modelo del documento. */
+export function economiaPlataforma(sel: Ruta[]) {
+  return economiaMes(sel, rutas, modeloMensual);
 }
 
 // Clientes --------------------------------------------------------------------------
@@ -175,9 +149,9 @@ export function detalleCliente(c: ClientePlataforma) {
   return {
     ...c,
     emergencia,
-    tasa: c.credito ? tasaCreditoActual(c.credito.tipo, c.pagadosATiempo) : null,
+    tasa: c.credito ? tasaCreditoActual(c.credito.tipo, c.creditosSurtidoPagados) : null,
     cuotaMinima: c.credito ? cuotaMinima(c.credito.cuota) : null,
-    tasaProximo: tasaProximoCredito(c.pagadosATiempo),
+    tasaProximo: tasaProximoSurtido(c.creditosSurtidoPagados, c.credito?.tipo === "surtido"),
     ahorroPrimero: c.reportado && !c.credito,
     semanasParaEvaluacion: Math.max(0, RACHA_EMERGENCIA - c.rachaSemanas),
   };

@@ -87,11 +87,8 @@ pad_square(mark, 0.04).resize((512, 512), Image.LANCZOS).save(out / "logo-mark.p
 mark_light = extract((865, 165, 1010, 322), BG_DARK, [(ivory_ink, IVORY), (gold_ink_dark, GOLD)])
 pad_square(mark_light, 0.04).resize((512, 512), Image.LANCZOS).save(out / "logo-mark-light.png", optimize=True)
 
-lock = extract((140, 70, 715, 410), BG_LIGHT, [(navy_ink, NAVY), (gold_ink, GOLD)])
-fit_w(lock, 1200).save(out / "logo-lockup.png", optimize=True)
-
-lock_h = extract((860, 165, 1500, 320), BG_DARK, [(ivory_ink, IVORY), (gold_ink_dark, GOLD)])
-fit_w(lock_h, 1200).save(out / "logo-lockup-light.png", optimize=True)
+# El logo completo del tablero trae el lema "Crédito que te impulsa", que contradice
+# el mensaje central (Gota a favor no presta). Solo se usa la gota; el nombre va en HTML.
 
 
 def app_icon(size, radius_ratio=0.22, inner=0.66):
@@ -107,4 +104,4 @@ def app_icon(size, radius_ratio=0.22, inner=0.66):
 app_icon(512).save(out / "icon.png", optimize=True)
 app_icon(180, radius_ratio=0.0).save(out / "apple-icon.png", optimize=True)
 app_icon(256, inner=0.78).save(out / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
-print("ok", mark.size, mark_light.size, lock.size, lock_h.size)
+print("ok", mark.size, mark_light.size)
