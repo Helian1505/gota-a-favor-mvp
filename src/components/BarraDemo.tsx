@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MarcaCuadro } from "./Marca";
+import { Logotipo } from "./Marca";
 import { foco, transicion } from "./estilos";
 
 const vistas = [
@@ -10,32 +10,35 @@ const vistas = [
 
 export type Vista = (typeof vistas)[number]["href"];
 
-/** Barra superior de escritorio para moverse entre las vistas del prototipo. */
-export function BarraDemo({ actual, className = "" }: { actual: Vista; className?: string }) {
+/**
+ * Navegación global, como la de DESIGN (1): 44 px de alto, material
+ * translúcido que deja ver el contenido al hacer scroll y enlaces de 12 px.
+ */
+export function BarraDemo({ actual, className = "" }: { actual?: Vista; className?: string }) {
   return (
-    <header className={`items-center justify-between gap-6 border-b border-line bg-card/80 px-6 py-3 ${className}`}>
-      <Link href="/" className={`flex items-center gap-2.5 rounded-lg ${foco}`}>
-        <MarcaCuadro tamano={30} />
-        <span className="text-[15px] font-semibold tracking-tight">Gota a favor</span>
-      </Link>
-      <nav aria-label="Vistas del prototipo" className="flex items-center gap-1 rounded-[10px] border border-line bg-card p-1">
-        {vistas.map((v) => {
-          const activa = v.href === actual;
-          return (
-            <Link
-              key={v.href}
-              href={v.href}
-              aria-current={activa ? "page" : undefined}
-              className={`flex h-9 items-center rounded-[7px] px-3 text-[13px] font-semibold ${transicion} ${foco} ${
-                activa ? "bg-navy text-white" : "text-slate hover:bg-haze"
-              }`}
-            >
-              {v.label}
-            </Link>
-          );
-        })}
-      </nav>
-      <p className="rounded-full bg-gold-soft px-3 py-1 text-xs font-semibold text-gold-ink">Datos de ejemplo</p>
+    <header className={`material sticky top-0 z-30 border-b border-black/[0.06] ${className}`}>
+      <div className="mx-auto flex h-11 max-w-[1024px] items-center justify-between gap-4 px-4 sm:px-6">
+        <Link href="/" aria-label="Gota a favor, inicio" className={`flex h-11 items-center rounded-link ${foco}`}>
+          <Logotipo tamano="sm" />
+        </Link>
+        <nav aria-label="Vistas del prototipo" className="flex items-center">
+          {vistas.map((v) => {
+            const activa = v.href === actual;
+            return (
+              <Link
+                key={v.href}
+                href={v.href}
+                aria-current={activa ? "page" : undefined}
+                className={`flex h-11 items-center rounded-link px-2 text-caption sm:px-3 ${transicion} ${foco} ${
+                  activa ? "font-medium text-ink" : "text-ink/80 hover:text-ink"
+                }`}
+              >
+                {v.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
     </header>
   );
 }

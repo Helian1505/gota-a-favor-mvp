@@ -16,7 +16,7 @@ import {
   tasaSurtido,
   type Urgencia,
 } from "@/lib/reglas";
-import { MarcaCuadro } from "../Marca";
+import { MarcaAvatar } from "../Marca";
 import { botonDiscreto, botonOpcion, botonSecundario } from "../estilos";
 
 type Entrada = "bajar" | "emergencia" | "misma" | "urgencia";
@@ -91,29 +91,25 @@ export function ChatCliente() {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <header className="flex items-center gap-3 border-b border-line bg-card px-[18px] pt-[18px] pb-3.5">
-        <MarcaCuadro tamano={40} />
+      <header className="material z-10 flex items-center gap-3 border-b border-black/[0.06] px-4 pt-4 pb-3">
+        <MarcaAvatar tamano={40} />
         <div className="flex min-w-0 grow flex-col gap-0.5">
-          <h1 className="text-base font-semibold tracking-tight">Gota a favor</h1>
-          <p className="text-xs text-muted">Tu plata está a tu nombre en el aliado</p>
+          <h1 className="text-[17px] leading-tight font-semibold">Gota a favor</h1>
+          <p className="text-caption text-muted">Tu plata está a tu nombre en el aliado</p>
         </div>
-        <p className="shrink-0 rounded-full bg-gold-soft px-[9px] py-1 text-[11px] font-semibold text-gold-ink">
-          Racha {c.rachaSemanas} sem.
-        </p>
+        <p className="shrink-0 text-caption font-semibold text-orange">Racha {c.rachaSemanas} sem.</p>
       </header>
 
       <div
         role="log"
         aria-live="polite"
         aria-label="Conversación con Gota a favor"
-        className="flex min-h-0 grow flex-col gap-3 overflow-y-auto px-3.5 py-4"
+        className="flex min-h-0 grow flex-col gap-2.5 overflow-y-auto bg-card px-4 py-4"
       >
-        <p className="self-center rounded-full bg-mist px-2.5 py-[3px] text-[11px] text-muted">
-          Lunes · extracto semanal
-        </p>
+        <p className="self-center text-caption font-medium text-muted">Lunes · extracto semanal</p>
 
         <Burbuja>
-          <p className="text-sm">Hola, {c.nombre}. Así va tu plata esta semana:</p>
+          <p className="text-[15px]">Hola, {c.nombre}. Así va tu plata esta semana:</p>
           <div className="grid grid-cols-2 gap-2.5">
             <Casilla titulo="Ahorro libre" valor={pesos(c.ahorroLibre)} nota={`gana ${tasa(c.ahorroTasaEA)} EA`} />
             <Casilla
@@ -128,27 +124,30 @@ export function ChatCliente() {
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.round((c.bolsilloArriendo / c.metaArriendo) * 100)}
-            className="h-1.5 overflow-hidden rounded-full bg-mist"
+            className="h-1.5 overflow-hidden rounded-full bg-control"
           >
-            <div className="h-1.5 bg-navy" style={{ width: `${(c.bolsilloArriendo / c.metaArriendo) * 100}%` }} />
+            <div
+              className="h-1.5 w-full origin-left rounded-full bg-blue-fill"
+              style={{ transform: `scaleX(${c.bolsilloArriendo / c.metaArriendo})` }}
+            />
           </div>
-          <dl className="flex flex-col gap-1.5 text-[13px]">
-            <Fila etiqueta="Crédito del día 1" valor={<span className="font-mono">{pesos(c.saldoCredito)}</span>} />
+          <dl className="flex flex-col gap-1.5 text-body-sm">
+            <Fila etiqueta="Crédito del día 1" valor={<span className="tabular-nums">{pesos(c.saldoCredito)}</span>} />
             <Fila etiqueta="Tasa" valor={`${tasa(TASA_CREDITO_DIA1)} mensual`} />
             <Fila
               etiqueta="Cuota de esta semana"
-              valor={<span className="font-mono font-semibold">{pesos(cuota)}</span>}
+              valor={<span className="tabular-nums font-semibold">{pesos(cuota)}</span>}
             />
             <Fila etiqueta="Próxima recogida" valor={c.proximaRecogida} />
           </dl>
-          <p className="border-t border-divider pt-2.5 text-xs text-muted">
+          <p className="border-t border-black/[0.08] pt-2.5 text-caption text-muted">
             Recoger tu cuota no tiene costo. Recoger ahorro a domicilio: $1.500 si depositas $20.000 o más; en la
             tienda-punto o por Nequi es gratis.
           </p>
         </Burbuja>
 
         {s.entradas.map((e) => (
-          <div key={e} className="flex flex-col gap-3">
+          <div key={e} className="flex flex-col gap-2.5 pt-1">
             <MensajeUsuario>{mensajeUsuario[e]}</MensajeUsuario>
             {e === "bajar" && <RespuestaBajar />}
             {e === "emergencia" && (
@@ -168,8 +167,8 @@ export function ChatCliente() {
         <div ref={finRef} />
       </div>
 
-      <div className="flex flex-col gap-2 border-t border-line bg-card px-3.5 pt-3 pb-[18px]">
-        <p id="respuestas-rapidas" className="text-[11px] text-muted">
+      <div className="material flex flex-col gap-2 border-t border-black/[0.06] px-4 pt-3 pb-4">
+        <p id="respuestas-rapidas" className="text-caption font-medium text-muted">
           Respuestas rápidas
         </p>
         <div role="group" aria-labelledby="respuestas-rapidas" className="flex flex-wrap gap-2">
@@ -197,25 +196,20 @@ export function ChatCliente() {
   );
 }
 
-function Burbuja({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return (
-    <div className={`flex max-w-[320px] flex-col gap-3.5 rounded-2xl border border-line bg-card p-4 ${className}`}>
-      {children}
-    </div>
-  );
+/** Globo del bot: gris como en Mensajes, con la esquina de la cola más cerrada. */
+const globoBot = "flex max-w-[320px] flex-col rounded-[22px] rounded-bl-md bg-mist";
+
+function Burbuja({ children }: { children: ReactNode }) {
+  return <div className={`${globoBot} gap-3.5 p-4`}>{children}</div>;
 }
 
-function RespuestaBot({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex max-w-[320px] flex-col gap-2 rounded-2xl border border-line bg-card px-4 py-3.5 text-sm">
-      {children}
-    </div>
-  );
+function RespuestaBot({ children, className = "gap-2" }: { children: ReactNode; className?: string }) {
+  return <div className={`entra entra-izquierda ${globoBot} px-4 py-3.5 text-[15px] ${className}`}>{children}</div>;
 }
 
 function MensajeUsuario({ children }: { children: ReactNode }) {
   return (
-    <p className="max-w-[280px] self-end rounded-[16px_16px_4px_16px] bg-navy px-3.5 py-2.5 text-sm text-white">
+    <p className="entra entra-derecha max-w-[280px] self-end rounded-[22px] rounded-br-md bg-blue-fill px-4 py-2.5 text-[15px] text-white">
       {children}
     </p>
   );
@@ -223,10 +217,10 @@ function MensajeUsuario({ children }: { children: ReactNode }) {
 
 function Casilla({ titulo, valor, nota }: { titulo: string; valor: string; nota: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl bg-surface px-3 py-2.5">
-      <p className="text-[11px] text-muted">{titulo}</p>
-      <p className="font-mono text-[17px] font-medium">{valor}</p>
-      <p className="text-[11px] text-muted">{nota}</p>
+    <div className="flex flex-col gap-1 rounded-tile bg-card px-3 py-2.5">
+      <p className="text-caption text-muted">{titulo}</p>
+      <p className="text-[19px] font-semibold tracking-tight tabular-nums">{valor}</p>
+      <p className="text-caption text-muted">{nota}</p>
     </div>
   );
 }
@@ -240,8 +234,9 @@ function Fila({ etiqueta, valor }: { etiqueta: string; valor: ReactNode }) {
   );
 }
 
+/** Resultado dentro de una respuesta: tarjeta blanca que entra en su lugar. */
 function AvisoDorado({ children }: { children: ReactNode }) {
-  return <div className="rounded-xl bg-gold-soft px-3 py-2.5 text-[13px] text-warn-ink">{children}</div>;
+  return <div className="entra entra-izquierda rounded-tile bg-card px-3 py-2.5 text-body-sm text-ink">{children}</div>;
 }
 
 function RespuestaBajar() {
@@ -250,10 +245,10 @@ function RespuestaBajar() {
       <p className="font-semibold">Listo, esta semana pagas el mínimo.</p>
       <p>
         Tu cuota baja de {pesos(c.cuota)} a{" "}
-        <span className="font-mono font-semibold">{pesos(bajada.cuotaNueva)}</span>. La diferencia se corre al
+        <span className="tabular-nums font-semibold">{pesos(bajada.cuotaNueva)}</span>. La diferencia se corre al
         final del plazo, con su interés. Tu cuota nunca sube.
       </p>
-      <p className="text-xs text-muted">Tu racha se mantiene: bajar la cuota es un derecho, no un atraso.</p>
+      <p className="text-body-sm text-muted">Tu racha se mantiene: bajar la cuota es un derecho, no un atraso.</p>
     </RespuestaBot>
   );
 }
@@ -268,7 +263,7 @@ function RespuestaEmergencia({ monto, onMonto }: { monto: number | null; onMonto
     );
   }
   return (
-    <div className="flex max-w-[320px] flex-col gap-2.5 rounded-2xl border border-line bg-card px-4 py-3.5 text-sm">
+    <RespuestaBot className="gap-2.5">
       <p className="font-semibold">Tienes un cupo pre-aprobado por tu racha.</p>
       <p id="emergencia-monto">¿Cuánto necesitas hoy?</p>
       <div role="group" aria-labelledby="emergencia-monto" className="flex gap-2">
@@ -286,11 +281,11 @@ function RespuestaEmergencia({ monto, onMonto }: { monto: number | null; onMonto
       </div>
       {monto !== null && (
         <AvisoDorado>
-          Aprobado: <span className="font-mono">{pesos(monto)}</span>. Te lo entrega hoy tu recaudador o llega a tu
+          Aprobado: <span className="tabular-nums">{pesos(monto)}</span>. Te lo entrega hoy tu recaudador o llega a tu
           Nequi. Tasa {tasa(emergencia.tasaMensual)} mensual, cuotas en tu ruta.
         </AvisoDorado>
       )}
-    </div>
+    </RespuestaBot>
   );
 }
 
@@ -301,7 +296,7 @@ function RespuestaMisma() {
       <p>
         La ruta sigue pasando y tus {pesos(c.cuota)} semanales van a tu ahorro. En {c.semanasProyeccion} semanas
         serían unos{" "}
-        <span className="font-mono font-semibold">{pesos(proyeccionAhorro(c.cuota, c.semanasProyeccion))}</span> a
+        <span className="tabular-nums font-semibold">{pesos(proyeccionAhorro(c.cuota, c.semanasProyeccion))}</span> a
         tu nombre, y tu primer crédito para surtido sale al {tasa(escaleraSurtido[0])} mensual y baja a{" "}
         {tasa(escaleraSurtido[1])} y luego a {tasa(escaleraSurtido[2])} si lo pagas a tiempo.
       </p>
@@ -321,7 +316,7 @@ function RespuestaUrgencia({
   onReportado: (r: boolean) => void;
 }) {
   return (
-    <div className="flex max-w-[320px] flex-col gap-2.5 rounded-2xl border border-line bg-card px-4 py-3.5 text-sm">
+    <RespuestaBot className="gap-2.5">
       <p className="font-semibold">Primero movemos la fecha con quien te cobra.</p>
       <p id="urgencia-que">¿Qué necesitas pagar?</p>
       <div role="group" aria-labelledby="urgencia-que" className="flex flex-wrap gap-2">
@@ -344,19 +339,19 @@ function RespuestaUrgencia({
             Tu distribuidor te entrega hoy y te cobra a 15 días; tu recaudador recoge la cuota en cada visita, queda
             en tu bolsillo en el aliado y el día {pedido.diaPagoDistribuidor} se le transfiere desde tu cuenta.
           </AvisoDorado>
-          <div className="flex flex-col gap-2 rounded-xl bg-surface px-3 py-2.5">
-            <p className="text-[11px] text-muted">
-              Ejemplo: pedido de <span className="font-mono">{pesos(pedido.total)}</span>
+          <div className="entra entra-izquierda flex flex-col gap-2 rounded-tile bg-card px-3 py-2.5">
+            <p className="text-caption text-muted">
+              Ejemplo: pedido de <span className="tabular-nums">{pesos(pedido.total)}</span>
             </p>
-            <ol className="grid grid-cols-4 gap-1.5">
+            <ol className="grid grid-cols-2 gap-1.5">
               {pedido.cuotas.map((q, i) => (
-                <li key={i} className="flex flex-col gap-0.5 rounded-lg bg-card px-1.5 py-1.5 text-center">
-                  <span className="text-[10px] text-muted">Recogida {i + 1}</span>
-                  <span className="font-mono text-xs font-medium">{pesos(q)}</span>
+                <li key={i} className="flex items-baseline justify-between gap-2 rounded-[12px] bg-mist px-2.5 py-1.5">
+                  <span className="text-caption text-muted">Recogida {i + 1}</span>
+                  <span className="text-body-sm font-medium tabular-nums">{pesos(q)}</span>
                 </li>
               ))}
             </ol>
-            <p className="text-[11px] text-muted">
+            <p className="text-caption text-muted">
               {pedido.cuotas.length} recogidas de {pesos(pedido.cuotaPorRecogida)} · se transfiere al distribuidor el
               día {pedido.diaPagoDistribuidor}
             </p>
@@ -369,10 +364,10 @@ function RespuestaUrgencia({
           <AvisoDorado>
             Acordamos con quien te cobra que reciba por partes lo que recoge tu ruta, pagado directo.
           </AvisoDorado>
-          <p className="rounded-xl bg-surface px-3 py-2.5 text-[13px]">
-            Ejemplo: un arriendo de <span className="font-mono">{pesos(arriendo.total)}</span> que vence el{" "}
+          <p className="entra entra-izquierda rounded-tile bg-card px-3 py-2.5 text-body-sm">
+            Ejemplo: un arriendo de <span className="tabular-nums">{pesos(arriendo.total)}</span> que vence el{" "}
             {c.arriendoEjemplo.diaVence}. Acordamos con el arrendador {arriendo.abonos.length} abonos de{" "}
-            <span className="font-mono">{pesos(arriendo.abono)}</span>. Tu ruta los recoge, entran a tu bolsillo
+            <span className="tabular-nums">{pesos(arriendo.abono)}</span>. Tu ruta los recoge, entran a tu bolsillo
             arriendo en el aliado y se le transfieren directo. Sin crédito y sin interés.
           </p>
         </div>
@@ -401,8 +396,8 @@ function RespuestaUrgencia({
           </div>
           {reportado === false && (
             <AvisoDorado>
-              Crédito del día 1 de <span className="font-mono">{pesos(EMERGENCIA_MIN)}</span> a{" "}
-              <span className="font-mono">{pesos(EMERGENCIA_MAX)}</span>, al {tasa(TASA_CREDITO_DIA1)} mensual, con
+              Crédito del día 1 de <span className="tabular-nums">{pesos(EMERGENCIA_MIN)}</span> a{" "}
+              <span className="tabular-nums">{pesos(EMERGENCIA_MAX)}</span>, al {tasa(TASA_CREDITO_DIA1)} mensual, con
               cuotas en tu ruta.
             </AvisoDorado>
           )}
@@ -411,6 +406,6 @@ function RespuestaUrgencia({
           )}
         </div>
       )}
-    </div>
+    </RespuestaBot>
   );
 }

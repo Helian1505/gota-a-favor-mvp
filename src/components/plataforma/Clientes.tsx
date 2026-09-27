@@ -6,7 +6,7 @@ import { clientesPlataforma, rutas, type ClientePlataforma } from "@/lib/datos";
 import { pesos, tasa } from "@/lib/formato";
 import { detalleCliente, filtrarClientes, type FiltroClientes } from "@/lib/resumen";
 import { EMERGENCIA_MAX, EMERGENCIA_MIN, RACHA_EMERGENCIA } from "@/lib/reglas";
-import { foco, transicion } from "../estilos";
+import { foco } from "../estilos";
 import { useRutasSeleccionadas } from "./Shell";
 import { Chip, Kpi, Mini, TablaDesplazable, Tarjeta } from "./ui";
 
@@ -51,7 +51,7 @@ export function Clientes() {
 
   return (
     <>
-      <section aria-label="Indicadores de clientes" className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+      <section aria-label="Indicadores de clientes" className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         <Kpi label="Clientes en la muestra" valor={String(deRutas.length)} sub={`de ${totalClientes} clientes activos`} />
         <Kpi
           label="Ahorro de la muestra"
@@ -70,18 +70,18 @@ export function Clientes() {
         />
       </section>
 
-      <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <Tarjeta className="xl:col-span-2">
           <div className="flex flex-col gap-3">
             <label className="relative flex items-center">
               <span className="sr-only">Buscar cliente por nombre o negocio</span>
-              <Search size={16} strokeWidth={1.75} aria-hidden className="pointer-events-none absolute left-3 text-muted" />
+              <Search size={16} strokeWidth={1.75} aria-hidden className="pointer-events-none absolute left-4 text-muted" />
               <input
                 type="search"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
                 placeholder="Buscar cliente o negocio"
-                className={`h-11 w-full rounded-xl border border-line bg-card pr-3 pl-9 text-sm placeholder:text-muted md:w-64 ${foco}`}
+                className={`h-11 w-full rounded-full border border-steel bg-card pr-4 pl-10 text-body-sm placeholder:text-muted md:w-72 ${foco}`}
               />
             </label>
             <div role="group" aria-label="Filtrar clientes" className="flex flex-wrap gap-1.5">
@@ -91,10 +91,10 @@ export function Clientes() {
                   type="button"
                   aria-pressed={filtro === f.id}
                   onClick={() => setFiltro(f.id)}
-                  className={`h-9 rounded-full border px-3 text-xs font-semibold ${transicion} ${foco} ${
+                  className={`presionable h-9 rounded-full border px-3.5 text-body-sm font-medium ${foco} ${
                     filtro === f.id
-                      ? "border-navy bg-navy text-white hover:bg-navy-deep"
-                      : "border-line bg-card text-slate hover:bg-haze"
+                      ? "border-blue-fill bg-blue-fill text-white hover:bg-blue-deep"
+                      : "border-steel bg-card text-ink-soft hover:border-ink hover:text-ink"
                   }`}
                 >
                   {f.label}
@@ -104,14 +104,14 @@ export function Clientes() {
           </div>
 
           {lista.length === 0 ? (
-            <p className="rounded-xl bg-ivory px-4 py-6 text-center text-sm text-muted">
+            <p className="rounded-tile bg-mist px-4 py-6 text-center text-body-sm text-muted">
               Ningún cliente coincide con la búsqueda o el filtro.
             </p>
           ) : (
             <TablaDesplazable etiqueta="Tabla de clientes">
-              <table className="w-full min-w-[640px] text-left text-[13px]">
+              <table className="w-full min-w-[640px] text-left text-body-sm">
                 <thead>
-                  <tr className="border-b border-divider text-xs text-muted">
+                  <tr className="border-b border-divider text-caption text-muted">
                     <th scope="col" className="py-1.5 pr-2 font-normal">Cliente · negocio</th>
                     <th scope="col" className="py-1.5 pr-2 font-normal">Ruta</th>
                     <th scope="col" className="py-1.5 pr-2 font-normal">Racha</th>
@@ -125,22 +125,22 @@ export function Clientes() {
                     const activo = actual?.id === c.id;
                     const e = estado(c);
                     return (
-                      <tr key={c.id} className={`border-b border-divider last:border-b-0 ${activo ? "bg-haze/70" : ""}`}>
+                      <tr key={c.id} className={`border-b border-divider last:border-b-0 ${activo ? "bg-mist" : ""}`}>
                         <th scope="row" className="py-1 pr-2 text-left font-normal">
                           <button
                             type="button"
                             aria-pressed={activo}
                             onClick={() => elegir(c.id)}
-                            className={`flex min-h-11 w-full flex-col justify-center rounded-lg px-1 text-left hover:text-navy ${foco}`}
+                            className={`flex min-h-11 w-full flex-col justify-center rounded-link px-1 text-left hover:text-blue ${foco}`}
                           >
                             <span className="font-semibold">{c.nombre}</span>
-                            <span className="text-xs text-muted">{c.negocio}</span>
+                            <span className="text-caption text-muted">{c.negocio}</span>
                           </button>
                         </th>
-                        <td className="py-2 pr-2 text-slate">{nombreRuta(c.ruta)}</td>
-                        <td className="py-2 pr-2 font-mono">{c.rachaSemanas} sem.</td>
-                        <td className="py-2 pr-2 text-right font-mono">{c.ahorro ? pesos(c.ahorro) : "—"}</td>
-                        <td className="py-2 pr-2 text-right font-mono">{c.credito ? pesos(c.credito.saldo) : "—"}</td>
+                        <td className="py-2 pr-2 text-ink-soft">{nombreRuta(c.ruta)}</td>
+                        <td className="py-2 pr-2 tabular-nums">{c.rachaSemanas} sem.</td>
+                        <td className="py-2 pr-2 text-right tabular-nums">{c.ahorro ? pesos(c.ahorro) : "—"}</td>
+                        <td className="py-2 pr-2 text-right tabular-nums">{c.credito ? pesos(c.credito.saldo) : "—"}</td>
                         <td className="py-2">
                           <Chip tono={e.tono}>{e.texto}</Chip>
                         </td>
@@ -151,12 +151,12 @@ export function Clientes() {
               </table>
             </TablaDesplazable>
           )}
-          <p className="text-xs text-muted">
+          <p className="text-caption text-muted">
             Muestra de {deRutas.length} de {totalClientes} clientes activos. Toca un nombre para ver su ficha.
           </p>
         </Tarjeta>
 
-        {actual ? <FichaCliente cliente={actual} /> : null}
+        {actual ? <FichaCliente key={actual.id} cliente={actual} /> : null}
       </div>
     </>
   );
@@ -169,14 +169,14 @@ function FichaCliente({ cliente }: { cliente: ClientePlataforma }) {
 
   return (
     <Tarjeta className="scroll-mt-4 xl:sticky xl:top-6 xl:self-start" id="ficha-cliente">
-      <div aria-live="polite" className="flex flex-col gap-3">
+      <div aria-live="polite" className="cruza flex flex-col gap-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex flex-col gap-0.5">
-            <h2 className="text-[15px] font-semibold">{d.nombre}</h2>
-            <p className="text-xs text-muted">
+            <h2 className="font-display text-nav-title font-semibold">{d.nombre}</h2>
+            <p className="text-caption text-muted">
               {d.negocio} · {ruta?.ruta}
             </p>
-            <p className="text-xs text-muted">{ruta?.referente}</p>
+            <p className="text-caption text-muted">{ruta?.referente}</p>
           </div>
           <Chip tono={e.tono}>{e.texto}</Chip>
         </div>
@@ -187,7 +187,7 @@ function FichaCliente({ cliente }: { cliente: ClientePlataforma }) {
         </div>
 
         {d.credito ? (
-          <dl className="flex flex-col gap-1.5 text-[13px]">
+          <dl className="flex flex-col gap-1.5 text-body-sm">
             <Fila etiqueta={d.credito.tipo === "dia1" ? "Crédito del día 1" : "Crédito de surtido"} valor={pesos(d.credito.saldo)} mono />
             <Fila etiqueta="Tasa" valor={`${tasa(d.tasa ?? 0)} mensual`} />
             <Fila etiqueta="Cuota semanal" valor={pesos(d.credito.cuota)} mono />
@@ -195,7 +195,7 @@ function FichaCliente({ cliente }: { cliente: ClientePlataforma }) {
             <Fila etiqueta="Próximo crédito de surtido" valor={`${tasa(d.tasaProximo)} mensual`} />
           </dl>
         ) : (
-          <p className="rounded-xl bg-ivory px-3 py-2.5 text-[13px] text-slate">
+          <p className="rounded-tile bg-mist px-4 py-3 text-body-sm text-ink-soft">
             {d.ahorroPrimero
               ? d.semanasParaEvaluacion > 0
                 ? `Ahorra primero: le faltan ${d.semanasParaEvaluacion} semanas de historial para que el aliado lo evalúe.`
@@ -205,8 +205,8 @@ function FichaCliente({ cliente }: { cliente: ClientePlataforma }) {
         )}
 
         <div
-          className={`rounded-xl px-3 py-2.5 text-[13px] ${
-            d.emergencia.habilitado ? "bg-gold-soft text-warn-ink" : "bg-ivory text-slate"
+          className={`rounded-tile px-4 py-3 text-body-sm ${
+            d.emergencia.habilitado ? "bg-orange-soft text-ink" : "bg-mist text-ink-soft"
           }`}
         >
           {d.emergencia.habilitado
@@ -215,8 +215,8 @@ function FichaCliente({ cliente }: { cliente: ClientePlataforma }) {
         </div>
 
         {d.pidioMinimo && (
-          <p className="flex gap-2.5 text-[13px] leading-[1.4]">
-            <span aria-hidden className="mt-1.5 size-2 shrink-0 rounded-full bg-bordeaux" />
+          <p className="flex gap-2.5 text-body-sm leading-[1.4]">
+            <span aria-hidden className="mt-1.5 size-2 shrink-0 rounded-full bg-red" />
             Pidió el mínimo esta semana: llamada del coordinador; nunca cobro presencial con presión.
           </p>
         )}
@@ -229,7 +229,7 @@ function Fila({ etiqueta, valor, mono = false }: { etiqueta: string; valor: stri
   return (
     <div className="flex justify-between gap-3">
       <dt className="text-muted">{etiqueta}</dt>
-      <dd className={`text-right ${mono ? "font-mono" : ""}`}>{valor}</dd>
+      <dd className={`text-right ${mono ? "tabular-nums" : ""}`}>{valor}</dd>
     </div>
   );
 }

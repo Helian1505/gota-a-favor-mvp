@@ -37,6 +37,15 @@ for (const t of tamanos) {
   page.on("pageerror", (e) => errores.push(`${t.nombre} ${page.url()}: ${e.message}`));
   for (const r of rutas) {
     await page.goto(base + r, { waitUntil: "networkidle" });
+    // recorre la página para disparar las apariciones al hacer scroll antes de la captura completa
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += 400) {
+        window.scrollTo(0, y);
+        await new Promise((r) => setTimeout(r, 60));
+      }
+      window.scrollTo(0, 0);
+    });
+    await page.waitForTimeout(700);
     const nombre = r === "/" ? "inicio" : r.slice(1).replace("/", "-");
     await page.screenshot({ path: `${salida}/${nombre}-${t.nombre}.png`, fullPage: true });
     const ancho = await page.evaluate(() => document.documentElement.scrollWidth);

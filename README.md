@@ -80,15 +80,36 @@ src/
     resumen.ts         cálculos de la ruta, del tablero y de las secciones (con resumen.test.ts)
     datos.ts           datos de ejemplo
     formato.ts         moneda colombiana: $23.245
-referencia-diseno/     HTML de diseño aprobados, tablero de marca y script que extrae el logo
-public/marca/          logo en PNG transparente (navy y marfil)
+referencia-diseno/     HTML de diseño aprobados, logos de referencia y script que vectoriza la gota
+public/renders/        capturas de las vistas para el inicio (scripts/renders.mjs)
 ```
 
 ## Diseño
 
-- Estilo Linear/Apple con los colores de las camisetas del FC Versailles 26/27. Los tokens están en `tailwind.config.ts` (`navy`, `gold`, `bordeaux`, `ivory`…) y ningún componente usa hex sueltos.
-- Geist y Geist Mono (paquete `geist`); los números siempre van en Geist Mono. Íconos de `lucide-react` con trazo 1,75.
-- El logo sale del tablero de marca (`referencia-diseno/logo-tablero-marca.png`). `referencia-diseno/extraer-logo.py` recorta solo la gota, le quita el fondo y la pasa a los colores planos de la paleta. El nombre "Gota a favor" (con f minúscula) va en HTML, y el lema es "Tu ahorro, a tu nombre". La gota se usa en el inicio, los encabezados, el favicon y la imagen para compartir.
+- **Sistema visual: DESIGN (1), galería blanca al estilo Apple.**
+  - Lienzo blanco, bandas `#f5f5f7` y texto `#1d1d1f`.
+  - Un solo azul: `#0066cc` para enlaces y `#0071e3` para botones de acción.
+  - Tarjetas de 28 px sin borde ni sombra, y botones en píldora.
+  - Los tokens están en `tailwind.config.ts`; ningún componente usa hex sueltos.
+- **Tipografía.** SF Pro en equipos Apple e Inter (el sustituto que indica el DESIGN) en los demás, cargada con `next/font`. El tracking y el interlineado van por tamaño (`text-hero`, `text-body`, `text-caption`…). Los números usan cifras tabulares.
+- **Logo: propuesta 3 ("Minimal y cercana").**
+  - `referencia-diseno/vectorizar-logo.py` traza la gota a SVG: dos trazos navy y un punto dorado como círculo perfecto. El resultado está en `src/components/gota-trazo.ts`, así se ve nítida en cualquier tamaño.
+  - El nombre "Gota a favor" usa la tipografía del DESIGN, con "Gota a" en navy y "favor" en dorado, siempre con f minúscula.
+  - El lema es "Tu ahorro, a tu nombre".
+  - Favicon, ícono de Apple e imagen para compartir: `scripts/marca-imagenes.mjs`.
+- **Movimiento** (criterios de Emil Kowalski y de *apple-design*):
+  - Solo CSS, sin librerías.
+  - Solo `transform` y `opacity`.
+  - Curvas fuertes: `cubic-bezier(0.23, 1, 0.32, 1)` para entradas y `cubic-bezier(0.77, 0, 0.175, 1)` para movimientos en pantalla.
+  - Respuesta al presionar: escala 0,97.
+  - Los mensajes del chat entran desde su origen con `@starting-style` (240 ms).
+  - El control segmentado desliza su píldora con `transform` (250 ms).
+  - Las barras de avance usan `scaleX` y el aviso de efectivo sube desde el borde inferior.
+  - La aparición al hacer scroll existe solo en el inicio, se dispara una vez y escalona 60 ms entre elementos.
+  - No se anima lo que se usa decenas de veces al día (navegación, datos de los indicadores).
+  - Con `prefers-reduced-motion` se quitan los desplazamientos y se dejan fundidos suaves.
+  - Con `prefers-reduced-transparency`, las barras translúcidas pasan a sólidas.
+- **Renders del inicio.** Son capturas reales de las vistas, generadas con `scripts/renders.mjs`.
 
 ## Ajustes después de la entrega (27 sep 2026)
 
@@ -112,7 +133,27 @@ Cambios para que las cifras y el mensaje coincidan con el documento entregado:
    - Las pestañas Ruta 1 y Ruta 2 recalculan todo; los costos fijos se asignan por número de clientes.
 6. **Detalles menores.** Los enlaces "Inicio", "Cliente" y "Recaudador" de la plataforma pasan de 20 a 32 px de alto, y se agregó esta sección al README.
 
+## Rediseño (27 sep 2026)
+
+1. **Sistema visual nuevo:** DESIGN (1) reemplaza la paleta del FC Versailles y la tipografía Geist.
+2. **Logo nuevo:** la gota de la propuesta 3, vectorizada, con el nombre escrito en la tipografía del DESIGN. Se quitaron los PNG del logo anterior.
+3. **Inicio como página de producto:**
+   - hero con titular de 80 px y teléfonos como render;
+   - banda de destacados con tres tarjetas grandes;
+   - sección editorial del mecanismo;
+   - cierre con el logo apilado.
+4. **Chat del cliente al estilo Mensajes:** globos grises y azules y barras translúcidas.
+5. **Recaudador con banda oscura** y aviso de efectivo anclado abajo.
+6. **Plataforma sobre banda gris** con tarjetas de 28 px, filtro de ruta como control segmentado y montos que se ajustan al ancho de su tarjeta.
+7. **Movimiento** según las skills *apple-design*, *emil-design-eng*, *find-animation-opportunities*, *improve-animations* y *animate*.
+   - *animate-expo* no aplica: es para React Native.
+   - De *ui-ux-pro-max* se tomaron el patrón "Trust & Authority", los anti-patrones (sin degradados ni estilo lúdico) y el checklist de entrega. Su paleta oscura no se usó porque contradice el DESIGN elegido.
+8. **Verificación:**
+   - lint, 39 pruebas y build sin errores;
+   - Lighthouse 100 en accesibilidad, buenas prácticas y SEO en las 8 rutas, en celular y escritorio;
+   - Playwright recorre los flujos a 390 y 1440 px.
+
 ## Herramientas y tiempo
 
-- Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Vitest, ESLint, Playwright y Lighthouse.
+- Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Inter (`next/font`), Vitest, ESLint, Playwright y Lighthouse.
 - Construido con Claude Code en unos 30 minutos, a partir del prompt del Builder Case y de los tres HTML de referencia.

@@ -14,7 +14,7 @@ export function Rutas() {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 gap-4">
         {sel.map((r) => {
           const formal = rutaFormal(r.clientes);
           const pago = economia.porRuta.find((p) => p.id === r.id);
@@ -22,11 +22,11 @@ export function Rutas() {
             <Tarjeta key={r.id}>
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="flex flex-col gap-0.5">
-                  <h2 className="text-[15px] font-semibold">{r.ruta}</h2>
-                  <p className="text-xs text-muted">
+                  <h2 className="font-display text-nav-title font-semibold">{r.ruta}</h2>
+                  <p className="text-caption text-muted">
                     {r.referente} · {r.recaudador}
                   </p>
-                  <p className="text-xs text-muted">Franja: {r.franja}</p>
+                  <p className="text-caption text-muted">Franja: {r.franja}</p>
                 </div>
                 <Chip tono="dorado">Corresponsal</Chip>
               </div>
@@ -48,7 +48,7 @@ export function Rutas() {
 
               <div className="flex flex-col gap-1.5">
                 <Barra fraccion={formal.progreso} etiqueta={`${r.ruta}: hacia empleo formal`} />
-                <p className="text-xs text-muted">
+                <p className="text-caption text-muted">
                   {r.clientes} de {CLIENTES_RUTA_FORMAL} clientes ·{" "}
                   {formal.formal
                     ? "el recaudador ya tiene contrato laboral"
@@ -57,12 +57,12 @@ export function Rutas() {
               </div>
 
               {pago && (
-                <div className="flex flex-col gap-1 border-t border-divider pt-2.5 text-[13px]">
+                <div className="flex flex-col gap-1 border-t border-divider pt-2.5 text-body-sm">
                   <div className="flex items-baseline justify-between gap-3">
                     <span className="text-muted">Pago estimado del recaudador este mes</span>
-                    <span className="font-mono font-semibold">{pesos(pago.pagoRecaudador)}</span>
+                    <span className="tabular-nums font-semibold">{pesos(pago.pagoRecaudador)}</span>
                   </div>
-                  <p className="text-xs text-muted">
+                  <p className="text-caption text-muted">
                     $900 × {pago.visitasConTarifa} visitas con tarifa, más el 30% del 1,5% de{" "}
                     {pesos(pago.cuotasRecogidas)} en cuotas recogidas.
                   </p>
@@ -91,9 +91,9 @@ function RutaDeHoy() {
         enlace={{ href: "/recaudador", label: "Abrir vista del recaudador" }}
       />
       <TablaDesplazable etiqueta="Visitas de hoy en la Ruta 1">
-        <table className="w-full min-w-[620px] text-left text-[13px]">
+        <table className="w-full min-w-[620px] text-left text-body-sm">
           <thead>
-            <tr className="border-b border-divider text-xs text-muted">
+            <tr className="border-b border-divider text-caption text-muted">
               <th scope="col" className="py-1.5 pr-2 font-normal">Cliente</th>
               <th scope="col" className="py-1.5 pr-2 text-right font-normal">Cuota</th>
               <th scope="col" className="py-1.5 pr-2 text-right font-normal">Ahorro</th>
@@ -107,17 +107,17 @@ function RutaDeHoy() {
               <tr key={v.cliente.id} className="border-b border-divider">
                 <th scope="row" className="py-2 pr-2 text-left font-normal">
                   <span className="block font-semibold">{v.cliente.nombre}</span>
-                  <span className="block text-xs text-muted">
+                  <span className="block text-caption text-muted">
                     {v.cliente.pedido
                       ? `Pedido a 15 días · cuota ${v.cliente.pedido.cuotaNumero} de ${v.cliente.pedido.totalCuotas}`
                       : v.cliente.negocio}
                   </span>
                 </th>
-                <td className="py-2 pr-2 text-right font-mono">{v.cliente.cuota ? pesos(v.cliente.cuota) : "—"}</td>
-                <td className="py-2 pr-2 text-right font-mono">{v.cliente.ahorro ? pesos(v.cliente.ahorro) : "—"}</td>
-                <td className="py-2 pr-2 text-right font-mono">{v.tarifa ? pesos(v.tarifa) : "—"}</td>
-                <td className="py-2 pr-2 text-right font-mono">{pesos(v.totalVisita)}</td>
-                <td className="py-2 text-right font-mono">{pesos(v.pago)}</td>
+                <td className="py-2 pr-2 text-right tabular-nums">{v.cliente.cuota ? pesos(v.cliente.cuota) : "—"}</td>
+                <td className="py-2 pr-2 text-right tabular-nums">{v.cliente.ahorro ? pesos(v.cliente.ahorro) : "—"}</td>
+                <td className="py-2 pr-2 text-right tabular-nums">{v.tarifa ? pesos(v.tarifa) : "—"}</td>
+                <td className="py-2 pr-2 text-right tabular-nums">{pesos(v.totalVisita)}</td>
+                <td className="py-2 text-right tabular-nums">{pesos(v.pago)}</td>
               </tr>
             ))}
           </tbody>
@@ -128,15 +128,15 @@ function RutaDeHoy() {
               </th>
               <td className="py-2 pr-2" />
               <td className="py-2 pr-2" />
-              <td className="py-2 pr-2 text-right font-mono">{pesos(tarifas)}</td>
-              <td className="py-2 pr-2 text-right font-mono">{pesos(total)}</td>
-              <td className="py-2 text-right font-mono">{pesos(pago)}</td>
+              <td className="py-2 pr-2 text-right tabular-nums">{pesos(tarifas)}</td>
+              <td className="py-2 pr-2 text-right tabular-nums">{pesos(total)}</td>
+              <td className="py-2 text-right tabular-nums">{pesos(pago)}</td>
             </tr>
           </tfoot>
         </table>
       </TablaDesplazable>
       {total > TOPE_EFECTIVO && (
-        <p className="rounded-xl border border-warn-line bg-warn-bg px-3 py-2.5 text-[13px] text-warn-ink">
+        <p className="rounded-tile border border-orange-line bg-orange-soft px-4 py-3 text-body-sm text-ink">
           El recorrido completo suma {pesos(total)}, más que el tope de {pesos(TOPE_EFECTIVO)} en efectivo: el
           recaudador debe consignar en la tienda-punto al pasar {pesos(ALERTA_EFECTIVO)} y antes de la visita de
           pedido.
